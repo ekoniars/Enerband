@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 5-Min Ritual — Enerband</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+.editable { position: relative; padding: 2px 4px; cursor: text; border-radius: 2px; }
+.editable:hover { background: rgba(201, 169, 97, 0.15); }
+.copy-tooltip { position: fixed; top: 20px; right: 20px; background: var(--gold); color: var(--black); padding: 8px 16px; border-radius: 4px; z-index: 999; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">🎬 DEMO — Page: <strong>The 5-Min Ritual</strong> (How to Use)</div>
+
+<nav class="nav">
+  <div class="nav-logo"><a href="../index.html" style="color:inherit;text-decoration:none;">ENER<span>BAND</span></a></div>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="ritual.html" class="active">The 5-Min Ritual</a></li>
+    <li><a href="science.html">The Science</a></li>
+    <li><a href="clinical.html">Clinical Proof</a></li>
+    <li><a href="burst.html">Burst & Save</a></li>
+    <li><a href="faq.html">Answers</a></li>
+  </ul>
+  <a href="order.html" class="nav-cta">Drop My Price →</a>
+</nav>
+
+<!-- HERO -->
+<section class="section anchor-target" id="ritual-hero" data-section="RITUAL — HERO">
+  <div class="eyebrow">⏱ DAILY RITUAL</div>
+  <h1 class="h1"><span class="editable">5 Minutes.<br>One Ritual.<br>Lifted for Life.</span></h1>
+  <p class="lead"><span class="editable">No serums. No screens. No effort. Just press play.</span></p>
+  <div class="media-box vertical" style="max-width:400px; margin-top:32px;">VERTICAL VIDEO — Full ritual top to bottom</div>
+</section>
+
+<!-- 5 STEPS -->
+<section class="section-dark">
+  <div class="section-inner anchor-target" id="five-steps" data-section="THE 5 STEPS">
+    <div class="section-label">📋 Step-by-Step</div>
+    <h2 class="h2">The Ritual.</h2>
+
+    <div style="display:grid; gap:60px; margin-top:60px;">
+
+      <div class="grid-2">
+        <div class="media-box">VIDEO LOOP — Cleansing</div>
+        <div>
+          <div class="step-num" style="font-size:120px;">①</div>
+          <h3 class="h3">CLEAN</h3>
+          <p class="lead">Bare skin. No serum.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="step-num" style="font-size:120px;">②</div>
+          <h3 class="h3">WRAP</h3>
+          <p class="lead">Around jaw. Under chin.</p>
+        </div>
+        <div class="media-box">VIDEO LOOP — Wrapping</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="media-box">VIDEO LOOP — Holding & breathing</div>
+        <div>
+          <div class="step-num" style="font-size:120px;">③</div>
+          <h3 class="h3">HOLD</h3>
+          <p class="lead">Breathe deep. 60 seconds.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="step-num" style="font-size:120px;">④</div>
+          <h3 class="h3">RELEASE</h3>
+          <p class="lead">Feel the bounce.</p>
+        </div>
+        <div class="media-box">VIDEO LOOP — Release moment</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="media-box">VIDEO LOOP — Day 1 → Day 30 transformation</div>
+        <div>
+          <div class="step-num" style="font-size:120px;">⑤</div>
+          <h3 class="h3">REPEAT</h3>
+          <p class="lead">Daily for 30 days.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="btn-row" style="margin-top:60px;">
+      <a href="order.html" class="btn btn-gold">Start Day 1 →</a>
+      <a href="science.html" class="btn btn-outline">Why It Works →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TIPS -->
+<section class="section anchor-target" id="pro-tips" data-section="PRO TIPS">
+  <div class="section-label">💡 Pro Tips</div>
+  <h2 class="h2">Skin Coach Secrets.</h2>
+  <div class="grid-3" style="margin-top:48px;">
+    <div>
+      <div class="step-num">🌅</div>
+      <h3 class="h3">Morning Lift</h3>
+      <p>Best before makeup.</p>
+    </div>
+    <div>
+      <div class="step-num">🛏</div>
+      <h3 class="h3">Night Reset</h3>
+      <p>Cool, calm, restored.</p>
+    </div>
+    <div>
+      <div class="step-num">📱</div>
+      <h3 class="h3">Zoom Boost</h3>
+      <p>5 min before any call.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="../index.html">Home</a>
+    <a href="ritual.html">Ritual</a>
+    <a href="science.html">Science</a>
+    <a href="clinical.html">Clinical</a>
+    <a href="burst.html">Burst</a>
+    <a href="faq.html">FAQ</a>
+  </div>
+  <p>© 2026 ENERBAND</p>
+</footer>
+
+<script>
+document.querySelectorAll('.editable').forEach(el => {
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (this.classList.contains('editing')) return;
+    this.classList.add('editing');
+    const originalHTML = this.innerHTML;
+    const textContent = this.innerText;
+    const input = document.createElement('textarea');
+    input.value = textContent;
+    input.style.width = '100%';
+    input.style.minHeight = '80px';
+    input.style.padding = '8px';
+    input.style.fontFamily = 'inherit';
+    input.style.fontSize = 'inherit';
+    input.style.border = '2px solid var(--gold)';
+    input.style.borderRadius = '4px';
+    this.innerHTML = '';
+    this.appendChild(input);
+    input.focus();
+    input.select();
+    const save = () => {
+      this.innerHTML = input.value;
+      this.classList.remove('editing');
+    };
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) save();
+      if (e.key === 'Escape') {
+        this.innerHTML = originalHTML;
+        this.classList.remove('editing');
+      }
+    });
+  });
+  el.addEventListener('dblclick', function(e) {
+    e.stopPropagation();
+    navigator.clipboard.writeText(this.innerText);
+    const tooltip = document.createElement('div');
+    tooltip.className = 'copy-tooltip';
+    tooltip.textContent = '✓ Copied!';
+    document.body.appendChild(tooltip);
+    setTimeout(() => tooltip.remove(), 2000);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Science — Enerband</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+.editable { position: relative; padding: 2px 4px; cursor: text; border-radius: 2px; }
+.editable:hover { background: rgba(201, 169, 97, 0.15); }
+.copy-tooltip { position: fixed; top: 20px; right: 20px; background: var(--gold); color: var(--black); padding: 8px 16px; border-radius: 4px; z-index: 999; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">🔬 DEMO — Page: <strong>The Science</strong> (Technology)</div>
+
+<nav class="nav">
+  <div class="nav-logo"><a href="../index.html" style="color:inherit;text-decoration:none;">ENER<span>BAND</span></a></div>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="ritual.html">The 5-Min Ritual</a></li>
+    <li><a href="science.html" class="active">The Science</a></li>
+    <li><a href="clinical.html">Clinical Proof</a></li>
+    <li><a href="burst.html">Burst & Save</a></li>
+    <li><a href="faq.html">Answers</a></li>
+  </ul>
+  <a href="order.html" class="nav-cta">Drop My Price →</a>
+</nav>
+
+<!-- HERO -->
+<section class="section anchor-target" id="science-hero" data-section="SCIENCE — HERO">
+  <div class="eyebrow">🔬 PATENTED FUSION TECHNOLOGY</div>
+  <h1 class="h1"><span class="editable">24K Gold.<br>Medical Silicone.<br>One Patent.</span></h1>
+  <p class="lead"><span class="editable">The science of Controlled Mechanical Stretching.</span></p>
+  <div class="media-box" style="margin-top:32px;">VIDEO LOOP — 24K gold particles fusing with silicone (macro)</div>
+</section>
+
+<!-- THE PATENT -->
+<section class="section-dark">
+  <div class="section-inner anchor-target" id="patent" data-section="THE PATENT">
+    <div class="section-label">⚖️ Patent Pending</div>
+    <h2 class="h2">The Fusion.</h2>
+    <p class="lead">Pure 24K gold powder fused into medical-grade silicone at the molecular level.</p>
+
+    <div class="grid-3" style="margin-top:60px;">
+      <div>
+        <div class="step-num">Au</div>
+        <h3 class="h3" style="color:var(--gold)">24K GOLD</h3>
+        <p>Pure conductivity.<br>Zero allergens.</p>
+      </div>
+      <div>
+        <div class="step-num">Si</div>
+        <h3 class="h3" style="color:var(--gold)">SILICONE</h3>
+        <p>Medical-grade.<br>Lifetime durable.</p>
+      </div>
+      <div>
+        <div class="step-num">⚡</div>
+        <h3 class="h3" style="color:var(--gold)">FUSION</h3>
+        <p>Controlled stretch.<br>Real collagen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT LIFTS -->
+<section class="section anchor-target" id="how-it-lifts" data-section="HOW IT LIFTS">
+  <div class="section-label">📐 The Mechanism</div>
+  <div class="grid-2">
+    <div>
+      <h2 class="h2">The Accordion Effect.</h2>
+      <p class="lead">Stretch. Hold. Release. Repeat.</p>
+      <p style="font-size:18px; color:var(--gray); margin-top:24px;">Just like resistance training builds muscle — controlled stretching builds collagen and skin elasticity.</p>
+    </div>
+    <div class="media-box">VIDEO LOOP — Accordion-effect animation on skin layer</div>
+  </div>
+</section>
+
+<!-- THE STATS -->
+<section class="section-gold">
+  <div class="section-inner anchor-target" id="science-stats" data-section="THE PROOF NUMBERS">
+    <h2 class="h2">The Numbers.</h2>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">+30%</div>
+        <div class="stat-label">Collagen Synthesis</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5min</div>
+        <div class="stat-label">Daily Time</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Lifetime Durability</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <a href="clinical.html" class="btn btn-primary">See Clinical Trial →</a>
+      <a href="order.html" class="btn btn-outline">Try It Risk-Free →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="../index.html">Home</a>
+    <a href="ritual.html">Ritual</a>
+    <a href="science.html">Science</a>
+    <a href="clinical.html">Clinical</a>
+    <a href="burst.html">Burst</a>
+    <a href="faq.html">FAQ</a>
+  </div>
+  <p>© 2026 ENERBAND</p>
+</footer>
+
+<script>
+document.querySelectorAll('.editable').forEach(el => {
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (this.classList.contains('editing')) return;
+    this.classList.add('editing');
+    const originalHTML = this.innerHTML;
+    const textContent = this.innerText;
+    const input = document.createElement('textarea');
+    input.value = textContent;
+    input.style.width = '100%';
+    input.style.minHeight = '80px';
+    input.style.padding = '8px';
+    input.style.fontFamily = 'inherit';
+    input.style.fontSize = 'inherit';
+    input.style.border = '2px solid var(--gold)';
+    input.style.borderRadius = '4px';
+    this.innerHTML = '';
+    this.appendChild(input);
+    input.focus();
+    input.select();
+    const save = () => {
+      this.innerHTML = input.value;
+      this.classList.remove('editing');
+    };
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) save();
+      if (e.key === 'Escape') {
+        this.innerHTML = originalHTML;
+        this.classList.remove('editing');
+      }
+    });
+  });
+  el.addEventListener('dblclick', function(e) {
+    e.stopPropagation();
+    navigator.clipboard.writeText(this.innerText);
+    const tooltip = document.createElement('div');
+    tooltip.className = 'copy-tooltip';
+    tooltip.textContent = '✓ Copied!';
+    document.body.appendChild(tooltip);
+    setTimeout(() => tooltip.remove(), 2000);
+  });
+});
+</script>
+</body>
+</html>

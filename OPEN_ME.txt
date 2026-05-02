@@ -1,0 +1,52 @@
+🎯 ENERBAND DEMO SITE — OPEN ME!
+
+📍 מיקום: /Users/ekoniars/projects/Enerband/demo-site/
+
+🚀 איך לפתוח:
+
+OPTION 1 — בDirect (הכי מהר)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+open /Users/ekoniars/projects/Enerband/demo-site/index.html
+
+OPTION 2 — עם Local Server (ומומלץ יותר)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+cd /Users/ekoniars/projects/Enerband/demo-site
+python3 -m http.server 8000
+
+Then: open http://localhost:8000
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✨ מה שאתה יכול לעשות:
+
+1️⃣  לחץ על כל טקסט → Edit directly
+2️⃣  Double-click → Copy to clipboard
+3️⃣  Ctrl+Enter → Save (stored in browser)
+4️⃣  Esc → Cancel editing
+5️⃣  Navigate → Top nav links between pages
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 עמודים:
+
+Home:          /index.html
+Ritual:        /pages/ritual.html
+Science:       /pages/science.html
+Clinical:      /pages/clinical.html
+Burst & Save:  /pages/burst.html
+FAQ:           /pages/faq.html
+Order:         /pages/order.html
+Thanks:        /pages/thanks.html
+Community:     /pages/community.html
+Influencers:   /pages/influencer.html
+B2B:           /pages/b2b.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 Design System:
+
+Gold Brand Color: #c9a961
+Fully Responsive: Yes
+Mobile Friendly: Yes
+Editable sections: 40+
+Video placeholders: 12
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ הכל מוכן. Enjoy!
