@@ -357,7 +357,20 @@
 </footer>
 
 <script>
-document.querySelectorAll('.editable').forEach(el => {
+// Load saved content from localStorage on page load
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.editable').forEach((el, index) => {
+    const key = 'enerband_influencer_' + index;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      el.innerHTML = saved;
+    }
+  });
+});
+
+document.querySelectorAll('.editable').forEach((el, index) => {
+  const key = 'enerband_influencer_' + index;
+
   el.addEventListener('click', function(e) {
     e.stopPropagation();
     if (this.classList.contains('editing')) return;
@@ -369,12 +382,13 @@ document.querySelectorAll('.editable').forEach(el => {
     const input = document.createElement('textarea');
     input.value = textContent;
     input.style.width = '100%';
-    input.style.minHeight = '60px';
+    input.style.minHeight = '80px';
     input.style.padding = '8px';
     input.style.fontFamily = 'inherit';
     input.style.fontSize = 'inherit';
     input.style.border = '2px solid var(--gold)';
     input.style.borderRadius = '4px';
+    input.style.lineHeight = 'inherit';
 
     this.innerHTML = '';
     this.appendChild(input);
@@ -385,10 +399,9 @@ document.querySelectorAll('.editable').forEach(el => {
       const newText = input.value;
       this.innerHTML = newText;
       this.classList.remove('editing');
-
-      // Save to localStorage
-      const key = 'enerband_' + Math.random();
+      // Save to localStorage with persistent key
       localStorage.setItem(key, newText);
+      console.log('✅ Saved:', key);
     };
 
     const cancel = () => {
@@ -409,8 +422,8 @@ document.querySelectorAll('.editable').forEach(el => {
     const text = this.innerText;
     navigator.clipboard.writeText(text);
     const tooltip = document.createElement('div');
-    tooltip.textContent = 'Copied!';
-    tooltip.style.cssText = 'position:fixed; top:20px; right:20px; background:var(--gold); color:var(--black); padding:8px 16px; border-radius:4px; z-index:999;';
+    tooltip.textContent = '✓ Copied to clipboard!';
+    tooltip.style.cssText = 'position:fixed; top:20px; right:20px; background:var(--gold); color:var(--black); padding:8px 16px; border-radius:4px; z-index:999; font-weight:600;';
     document.body.appendChild(tooltip);
     setTimeout(() => tooltip.remove(), 2000);
   });
