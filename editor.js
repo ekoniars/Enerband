@@ -940,6 +940,277 @@
 
     console.log('Editor ready. Click to edit, Ctrl+Enter to save.');
     window.updateHistoryBadges();
+    initStripManager();
+  }
+
+  // === STRIP MANAGER ===
+
+  var stripSelector = 'section, .section-image-strip';
+  var stripBtn = null;
+  var stripMenu = null;
+  var activeStrip = null;
+  var reorderMode = false;
+  var dragStrip = null;
+  var dragPlaceholder = null;
+  var dragOffsetY = 0;
+
+  function getStrips() {
+    return Array.from(document.querySelectorAll(stripSelector)).filter(function(s) {
+      return !s.closest('.nav') && !s.closest('.footer') && !s.closest('.demo-banner');
+    });
+  }
+
+  function initStripManager() {
+    // Settings button
+    stripBtn = document.createElement('button');
+    stripBtn.id = 'strip-settings-btn';
+    stripBtn.textContent = 'הגדרות';
+    stripBtn.style.cssText = 'position:absolute;top:8px;right:8px;z-index:1000;background:#333;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:13px;font-weight:700;cursor:pointer;opacity:0;transition:opacity 0.2s;pointer-events:none;font-family:inherit;direction:rtl;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+    document.body.appendChild(stripBtn);
+
+    // Dropdown menu
+    stripMenu = document.createElement('div');
+    stripMenu.id = 'strip-menu';
+    stripMenu.style.cssText = 'position:absolute;z-index:1001;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.18);min-width:160px;display:none;overflow:hidden;direction:rtl;';
+    var items = [
+      { label: 'שכפול', icon: '📋', action: 'duplicate' },
+      { label: 'מחיקה', icon: '🗑', action: 'delete' },
+      { label: 'שנה מיקום', icon: '↕️', action: 'reorder' }
+    ];
+    items.forEach(function(item) {
+      var row = document.createElement('div');
+      row.dataset.action = item.action;
+      row.style.cssText = 'padding:10px 16px;cursor:pointer;font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;transition:background 0.15s;color:#222;';
+      row.innerHTML = '<span>' + item.icon + '</span><span>' + item.label + '</span>';
+      row.addEventListener('mouseenter', function() { row.style.background = '#f5f0e6'; });
+      row.addEventListener('mouseleave', function() { row.style.background = ''; });
+      row.addEventListener('click', function(e) {
+        e.stopPropagation();
+        handleStripAction(item.action);
+      });
+      stripMenu.appendChild(row);
+    });
+    document.body.appendChild(stripMenu);
+
+    // Hover detection on strips
+    document.addEventListener('mousemove', function(e) {
+      if (reorderMode) return;
+      var el = e.target.closest(stripSelector);
+      if (el && !el.closest('.nav') && !el.closest('.footer') && !el.closest('.demo-banner')) {
+        if (activeStrip !== el) {
+          activeStrip = el;
+          positionStripBtn();
+        }
+      } else if (!e.target.closest('#strip-settings-btn') && !e.target.closest('#strip-menu')) {
+        activeStrip = null;
+        stripBtn.style.opacity = '0';
+        stripBtn.style.pointerEvents = 'none';
+        stripMenu.style.display = 'none';
+      }
+    });
+
+    stripBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (stripMenu.style.display === 'none') {
+        var r = stripBtn.getBoundingClientRect();
+        stripMenu.style.top = (r.bottom + window.scrollY + 4) + 'px';
+        stripMenu.style.right = (window.innerWidth - r.right) + 'px';
+        stripMenu.style.left = 'auto';
+        stripMenu.style.display = '';
+      } else {
+        stripMenu.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#strip-menu') && !e.target.closest('#strip-settings-btn')) {
+        stripMenu.style.display = 'none';
+      }
+    });
+  }
+
+  function positionStripBtn() {
+    if (!activeStrip) return;
+    var r = activeStrip.getBoundingClientRect();
+    stripBtn.style.top = (r.top + window.scrollY + 8) + 'px';
+    stripBtn.style.right = '16px';
+    stripBtn.style.left = 'auto';
+    stripBtn.style.opacity = '1';
+    stripBtn.style.pointerEvents = 'auto';
+  }
+
+  function handleStripAction(action) {
+    stripMenu.style.display = 'none';
+    if (!activeStrip) return;
+
+    if (action === 'duplicate') {
+      var clone = activeStrip.cloneNode(true);
+      activeStrip.parentNode.insertBefore(clone, activeStrip.nextSibling);
+      clone.style.outline = '3px solid var(--gold)';
+      setTimeout(function() { clone.style.outline = ''; }, 1500);
+      showSaveToast();
+    }
+
+    if (action === 'delete') {
+      if (confirm('למחוק את הסטריפ הזה?')) {
+        activeStrip.remove();
+        activeStrip = null;
+        stripBtn.style.opacity = '0';
+        stripBtn.style.pointerEvents = 'none';
+      }
+    }
+
+    if (action === 'reorder') {
+      enterReorderMode();
+    }
+  }
+
+  function enterReorderMode() {
+    reorderMode = true;
+    stripBtn.style.opacity = '0';
+    stripBtn.style.pointerEvents = 'none';
+
+    // Shrink page 40% and pin left
+    document.body.style.transform = 'scale(0.6)';
+    document.body.style.transformOrigin = 'top left';
+    document.body.style.transition = 'transform 0.3s';
+    document.body.style.width = '60%';
+    document.body.style.display = 'inline-block';
+
+    // Overlay bar
+    var bar = document.createElement('div');
+    bar.id = 'reorder-bar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:10005;background:#333;color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;direction:rtl;';
+    bar.innerHTML = '<span>↕️ גרור סטריפים לשינוי סדר</span>';
+    document.body.appendChild(bar);
+
+    // Save button (floating on right side)
+    var saveBtn = document.createElement('button');
+    saveBtn.id = 'reorder-save-btn';
+    saveBtn.textContent = 'שמור';
+    saveBtn.style.cssText = 'position:fixed;top:16px;right:24px;z-index:10006;background:#ff4757;color:#fff;border:none;border-radius:8px;padding:12px 32px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(255,71,87,0.3);transition:transform 0.2s,box-shadow 0.2s;';
+    saveBtn.addEventListener('mouseenter', function() { saveBtn.style.transform = 'scale(1.05)'; saveBtn.style.boxShadow = '0 6px 24px rgba(255,71,87,0.4)'; });
+    saveBtn.addEventListener('mouseleave', function() { saveBtn.style.transform = ''; saveBtn.style.boxShadow = '0 4px 16px rgba(255,71,87,0.3)'; });
+    saveBtn.addEventListener('click', exitReorderMode);
+    document.body.appendChild(saveBtn);
+
+    // Mark strips
+    var strips = getStrips();
+    strips.forEach(function(s) {
+      s.style.cursor = 'move';
+      s.style.outline = '2px dashed rgba(219,189,133,0.5)';
+      s.style.transition = 'outline 0.2s, opacity 0.2s';
+      s.setAttribute('draggable', 'false');
+
+      s.addEventListener('mousedown', stripDragStart);
+    });
+
+    document.addEventListener('keydown', reorderEsc);
+  }
+
+  function reorderEsc(e) {
+    if (e.key === 'Escape') exitReorderMode();
+  }
+
+  function exitReorderMode() {
+    reorderMode = false;
+    document.body.style.transform = '';
+    document.body.style.transition = 'transform 0.3s';
+
+    var bar = document.getElementById('reorder-bar');
+    if (bar) bar.remove();
+
+    var strips = getStrips();
+    strips.forEach(function(s) {
+      s.style.cursor = '';
+      s.style.outline = '';
+      s.removeEventListener('mousedown', stripDragStart);
+    });
+
+    if (dragPlaceholder && dragPlaceholder.parentNode) dragPlaceholder.remove();
+    dragPlaceholder = null;
+    dragStrip = null;
+
+    document.removeEventListener('keydown', reorderEsc);
+  }
+
+  function stripDragStart(e) {
+    if (!reorderMode) return;
+    e.preventDefault();
+    dragStrip = this;
+    var rect = dragStrip.getBoundingClientRect();
+    dragOffsetY = e.clientY - rect.top;
+
+    // Create placeholder
+    dragPlaceholder = document.createElement('div');
+    dragPlaceholder.style.cssText = 'height:' + rect.height + 'px;background:rgba(219,189,133,0.15);border:2px dashed var(--gold);border-radius:8px;margin:0;transition:height 0.2s;';
+    dragStrip.parentNode.insertBefore(dragPlaceholder, dragStrip);
+
+    // Float the strip
+    dragStrip.style.position = 'fixed';
+    dragStrip.style.top = rect.top + 'px';
+    dragStrip.style.left = rect.left + 'px';
+    dragStrip.style.width = rect.width + 'px';
+    dragStrip.style.zIndex = '10006';
+    dragStrip.style.opacity = '0.85';
+    dragStrip.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)';
+    dragStrip.style.pointerEvents = 'none';
+
+    document.addEventListener('mousemove', stripDragMove);
+    document.addEventListener('mouseup', stripDragEnd);
+  }
+
+  function stripDragMove(e) {
+    if (!dragStrip) return;
+    dragStrip.style.top = (e.clientY - dragOffsetY) + 'px';
+
+    // Find nearest strip to swap with
+    var strips = getStrips().filter(function(s) { return s !== dragStrip; });
+    var closest = null;
+    var closestDist = Infinity;
+    strips.forEach(function(s) {
+      var r = s.getBoundingClientRect();
+      var mid = r.top + r.height / 2;
+      var dist = Math.abs(e.clientY - mid);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = s;
+      }
+    });
+
+    if (closest && dragPlaceholder) {
+      var r = closest.getBoundingClientRect();
+      var mid = r.top + r.height / 2;
+      if (e.clientY < mid) {
+        closest.parentNode.insertBefore(dragPlaceholder, closest);
+      } else {
+        closest.parentNode.insertBefore(dragPlaceholder, closest.nextSibling);
+      }
+    }
+  }
+
+  function stripDragEnd() {
+    if (!dragStrip) return;
+    document.removeEventListener('mousemove', stripDragMove);
+    document.removeEventListener('mouseup', stripDragEnd);
+
+    // Return strip to flow at placeholder position
+    dragStrip.style.position = '';
+    dragStrip.style.top = '';
+    dragStrip.style.left = '';
+    dragStrip.style.width = '';
+    dragStrip.style.zIndex = '';
+    dragStrip.style.opacity = '';
+    dragStrip.style.boxShadow = '';
+    dragStrip.style.pointerEvents = '';
+
+    if (dragPlaceholder && dragPlaceholder.parentNode) {
+      dragPlaceholder.parentNode.insertBefore(dragStrip, dragPlaceholder);
+      dragPlaceholder.remove();
+    }
+
+    dragPlaceholder = null;
+    dragStrip = null;
   }
 
   if (document.readyState === 'loading') {
