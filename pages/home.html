@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Enerband — Your Zero Gravity Skin Coach</title>
+<link rel="stylesheet" href="../styles.css?v=12">
+</head>
+<body>
+
+<!-- WELCOME POPUP -->
+<div id="welcome-overlay" class="welcome-overlay" style="display:none;" onclick="if(event.target===this)closeWelcome()">
+  <button class="welcome-close" onclick="closeWelcome()" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+  </button>
+  <div class="welcome-card">
+    <div class="welcome-title">Welcome! 🎉 You just dropped $10 for your friend</div>
+
+    <div class="welcome-price-row">
+      <span class="welcome-price-label">Your Price Right Now:</span>
+      <span class="welcome-price-old">€79</span>
+      <span class="welcome-price-arrow">➡</span>
+      <span class="welcome-price-new">€69</span>
+    </div>
+
+    <div class="welcome-subtitle">Now it's your turn to win:</div>
+    <ul class="welcome-benefits">
+      <li>
+        <div class="welcome-check"><svg viewBox="0 0 14 14"><polyline points="2 7 5.5 10.5 12 3.5"/></svg></div>
+        <span>As a thank you, you've instantly earned $5 off. No sign-up, no payment – just for showing up. Explore the product and unlock your discount.</span>
+      </li>
+      <li>
+        <div class="welcome-check"><svg viewBox="0 0 14 14"><polyline points="2 7 5.5 10.5 12 3.5"/></svg></div>
+        <span>Want another $50 off? Unlock your personal link and start sharing.</span>
+      </li>
+      <li>
+        <div class="welcome-check"><svg viewBox="0 0 14 14"><polyline points="2 7 5.5 10.5 12 3.5"/></svg></div>
+        <span>If 5 friends click it in the next 3 hours, you'll get a second Enerband 100% FREE.</span>
+      </li>
+    </ul>
+
+    <div class="welcome-how-title">How It Works?</div>
+    <div class="welcome-how-text">You can unlock the maximum discount and can get the strap for just $19:</div>
+    <div class="welcome-icons-row">
+      <svg class="welcome-share-icon" viewBox="0 0 36 36"><circle cx="18" cy="12" r="8" fill="#6bb5b5"/><ellipse cx="18" cy="30" rx="14" ry="8" fill="#6bb5b5"/><circle cx="28" cy="8" r="5" fill="#e58fb1" opacity="0.7"/></svg>
+      <svg class="welcome-share-icon" viewBox="0 0 36 36"><circle cx="18" cy="12" r="8" fill="#6bb5b5"/><ellipse cx="18" cy="30" rx="14" ry="8" fill="#6bb5b5"/><circle cx="28" cy="8" r="5" fill="#e58fb1" opacity="0.7"/></svg>
+      <svg class="welcome-share-icon" viewBox="0 0 36 36"><circle cx="18" cy="12" r="8" fill="#6bb5b5"/><ellipse cx="18" cy="30" rx="14" ry="8" fill="#6bb5b5"/><circle cx="28" cy="8" r="5" fill="#e58fb1" opacity="0.7"/></svg>
+      <svg class="welcome-share-icon" viewBox="0 0 36 36"><circle cx="18" cy="12" r="8" fill="#6bb5b5"/><ellipse cx="18" cy="30" rx="14" ry="8" fill="#6bb5b5"/><circle cx="28" cy="8" r="5" fill="#e58fb1" opacity="0.7"/></svg>
+      <svg class="welcome-share-icon" viewBox="0 0 36 36"><circle cx="18" cy="12" r="8" fill="#6bb5b5"/><ellipse cx="18" cy="30" rx="14" ry="8" fill="#6bb5b5"/><circle cx="28" cy="8" r="5" fill="#e58fb1" opacity="0.7"/></svg>
+      <span class="welcome-icons-result">= <strong>€50</strong><span>Discount</span></span>
+    </div>
+
+    <div class="welcome-cta-wrap">
+      <a href="order.html" class="welcome-cta" onclick="closeWelcome()">Save and Get Paid</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function showWelcome() {
+  document.getElementById('welcome-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeWelcome() {
+  var el = document.getElementById('welcome-overlay');
+  el.classList.add('hiding');
+  document.body.style.overflow = '';
+  setTimeout(function() { el.style.display = 'none'; el.classList.remove('hiding'); }, 250);
+}
+document.addEventListener('DOMContentLoaded', function() {
+  showWelcome();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeWelcome();
+});
+</script>
+
+<div class="demo-banner" style="display:flex; justify-content:space-between; align-items:center;">
+  <span>HOME PAGE</span>
+  <div style="display:flex;gap:6px;">
+    <button id="btn-mode" class="btn btn-outline" onclick="toggleEditMode()" style="padding:6px 12px; position:relative; font-size:16px; line-height:1;" title="Edit mode (click to switch to view)">&#9998;</button>
+    <button id="btn-undo" class="btn btn-outline" onclick="editorUndo()" style="padding:6px 16px; position:relative; font-size:13px;" title="Undo">&#8592; Undo</button>
+    <button id="btn-redo" class="btn btn-outline" onclick="editorRedo()" style="padding:6px 16px; position:relative; font-size:13px;" title="Redo">Redo &#8594;</button>
+    <button onclick="clearCacheAndReload()" style="padding:5px 10px; background:#ff4757; color:white; border:none; border-radius:4px; font-weight:700; font-size:13px; cursor:pointer;" title="Refresh CSS/JS">Reset</button>
+  </div>
+</div>
+
+<script>
+function clearCacheAndReload() {
+  // Clear localStorage cache
+  var keys = Object.keys(localStorage);
+  keys.forEach(function(k) {
+    if (k.startsWith('enerband_')) localStorage.removeItem(k);
+  });
+  // Clear browser cache for CSS/JS
+  if ('caches' in window) {
+    caches.keys().then(function(names) {
+      return Promise.all(names.map(function(n) { return caches.delete(n); }));
+    }).then(doReload).catch(doReload);
+  } else {
+    doReload();
+  }
+  function doReload() {
+    var files = [];
+    document.querySelectorAll('link[rel="stylesheet"]').forEach(function(l) {
+      files.push(l.href.split('?')[0]);
+    });
+    document.querySelectorAll('script[src]').forEach(function(s) {
+      files.push(s.src.split('?')[0]);
+    });
+    Promise.all(files.map(function(url) {
+      return fetch(url, { cache: 'reload' }).catch(function() {});
+    })).then(function() {
+      window.location.replace(window.location.pathname + '?v=' + Date.now());
+    });
+  }
+}
+</script>
+
+<nav class="nav nav-dark">
+  <div class="nav-logo"><a href="home.html"><img src="../images/enerband-main.svg" alt="Enerband" width="120" height="30"></a></div>
+  <ul class="nav-links">
+    <li><a href="home.html" class="active">Home</a></li>
+    <li><a href="ritual.html">The 5-Min Ritual</a></li>
+    <li><a href="science.html">The Science</a></li>
+    <li><a href="clinical.html">Clinical Proof</a></li>
+    <li><a href="burst.html">Burst & Save</a></li>
+    <li><a href="faq.html">Answers</a></li>
+  </ul>
+  <a href="order.html" class="nav-cta">Drop My Price →</a>
+</nav>
+
+<!-- HERO -->
+<section class="section-hero anchor-target" id="hero" data-section="HERO">
+  <div class="hero-content">
+    <h1 class="h1 editable fx-shine-silver" style="letter-spacing:0.04em; text-transform:uppercase; font-size:clamp(38px, 5.5vw, 64px);">Erase Today's Wrinkles.<br>Stop Tomorrow's.</h1>
+    <h2 class="h2 editable fx-shine" style="font-size:clamp(28px, 4vw, 48px);">Your Zero Gravity Skin Coach</h2>
+    <p class="lead editable">Medical-grade silicone. Pure 24K gold. Results in minutes. That last forever.</p>
+
+    <!-- EDITABLE CTA -->
+    <div style="width:80%; margin:32px 0 48px; text-align:left;">
+      <div style="font-size:21px; color:var(--color-text-light); margin-bottom:12px;" class="editable">Every click = $10.</div>
+      <a href="order.html" class="btn btn-gold" style="display:flex; align-items:center; justify-content:center; width:100%; font-size:16px;">
+        <span class="editable">Click Your Next $10</span>
+      </a>
+      <div style="font-size:18px; color:var(--color-text-light); margin-top:12px;" class="editable">Or just get it now.</div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <video src="../videos/hero_loop.mp4" autoplay loop muted playsinline></video>
+  </div>
+</section>
+
+<!-- BEFORE/AFTER IMAGE STRIP -->
+<section class="section-image-strip">
+  <div class="image-strip-inner">
+    <div class="strip-gradient strip-gradient-left"></div>
+    <div class="strip-images">
+      <img src="../images/testimonial-heather.png" alt="Before and after" loading="lazy">
+      <img src="../images/testimonial-jennifer.png" alt="Before and after" loading="lazy">
+      <img src="../images/testimonial-sandra.png" alt="Before and after" loading="lazy">
+      <img src="../images/testimonial-alisa.png" alt="Before and after" loading="lazy">
+    </div>
+    <div class="strip-gradient strip-gradient-right"></div>
+  </div>
+</section>
+
+<!-- THE SCIENCE -->
+<section class="section-light">
+  <div class="section-inner anchor-target" id="science-intro" data-section="WHY IT WORKS">
+    <div class="science-layout">
+      <div class="science-image">
+        <img src="../images/enerband-product.gif" alt="Enerband product" loading="lazy">
+      </div>
+      <div class="science-text">
+        <div class="section-label">🔬 The Technology</div>
+        <h2 class="h2 editable">Gold + Silicone<br>= Instant Lift</h2>
+
+        <div class="science-features">
+          <div class="science-feature">
+            <h3 class="h3 editable">Mechanical Lift</h3>
+            <p class="editable">Controlled stretching activates facial muscles instantly. You feel the lift within seconds.</p>
+          </div>
+          <div class="science-feature">
+            <h3 class="h3 editable">Gold Infusion</h3>
+            <p class="editable">24K gold powder boosts collagen production. Results compound over 30 days.</p>
+          </div>
+          <div class="science-feature">
+            <h3 class="h3 editable">Medical Grade</h3>
+            <p class="editable">Biocompatible silicone. Hypoallergenic. Safe for all skin types.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:40px;">
+          <a href="science.html" class="btn btn-outline">Full Science →</a>
+        </div>
+      </div>
+    </div>
+    <div class="science-thumbs">
+      <img src="../images/eyes-closeup.jpg" alt="Detail" loading="lazy">
+      <img src="../images/enerband-product.gif" alt="Product rotation" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- CLINICAL PROOF -->
+<section class="section-white">
+  <div class="section-inner anchor-target" id="clinical" data-section="CLINICAL PROOF">
+    <div class="clinical-layout">
+      <div class="clinical-text">
+        <div class="section-label">👩‍⚕️ Proven Results</div>
+        <h2 class="h2 editable">31% More Collagen<br>In 30 Days.</h2>
+
+        <div class="clinical-stats">
+          <div>
+            <div class="stat-num editable" style="color:var(--gold);">31%</div>
+            <div class="stat-label editable">Collagen Increase</div>
+            <p style="color:var(--gray); margin-top:16px; font-size:16px;" class="editable">
+              Measured in clinical trials. Prof. Shemer verified.
+            </p>
+          </div>
+          <div>
+            <div class="stat-num editable" style="color:var(--gold);">5 min</div>
+            <div class="stat-label editable">Per Day</div>
+            <p style="color:var(--gray); margin-top:16px; font-size:16px;" class="editable">
+              That's all. Daily ritual. Lift that lasts.
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top:40px;">
+          <a href="clinical.html" class="btn btn-outline">Read Prof. Shemer →</a>
+        </div>
+      </div>
+      <div class="clinical-image">
+        <img src="../images/prof-shemer.png" alt="Prof. Shemer" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE RITUAL -->
+<section class="section-dark">
+  <div class="section-inner anchor-target" id="ritual" data-section="HOW TO USE">
+    <div class="section-label">⏱ Daily Ritual</div>
+    <h2 class="h2 editable">5 Minutes.<br>One Tool.<br>Lifted for Life.</h2>
+
+    <p class="lead" style="margin-top:24px; margin-bottom:48px;" class="editable">
+      No serums. No screens. No effort. Just press play.
+    </p>
+
+    <div class="grid-2" style="margin-bottom:60px; gap:60px;">
+      <div>
+        <div style="font-size:60px; font-weight:900; color:var(--gold); margin-bottom:16px;">①</div>
+        <h3 class="h3 editable">Clean</h3>
+        <p class="editable">Bare skin. No serum.</p>
+      </div>
+      <div>
+        <div style="font-size:60px; font-weight:900; color:var(--gold); margin-bottom:16px;">②</div>
+        <h3 class="h3 editable">Wrap</h3>
+        <p class="editable">Around jaw. Under chin.</p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:60px; gap:60px;">
+      <div>
+        <div style="font-size:60px; font-weight:900; color:var(--gold); margin-bottom:16px;">③</div>
+        <h3 class="h3 editable">Hold</h3>
+        <p class="editable">Breathe deep. 60 seconds.</p>
+      </div>
+      <div>
+        <div style="font-size:60px; font-weight:900; color:var(--gold); margin-bottom:16px;">④</div>
+        <h3 class="h3 editable">Release</h3>
+        <p class="editable">Feel the bounce.</p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:60px; gap:60px;">
+      <div>
+        <div style="font-size:60px; font-weight:900; color:var(--gold); margin-bottom:16px;">⑤</div>
+        <h3 class="h3 editable">Repeat</h3>
+        <p class="editable">Daily for 30 days.</p>
+      </div>
+      <div class="ritual-video-wrap">
+        <img src="../images/enerband-product.gif" alt="Enerband ritual" loading="lazy" class="ritual-video-img">
+        <img src="../images/play-icon.svg" alt="Play" class="play-overlay">
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:60px;">
+      <a href="ritual.html" class="btn btn-primary">See Full Ritual →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section-dark">
+  <div class="section-inner anchor-target" id="testimonials" data-section="TESTIMONIALS">
+    <div class="section-label">⭐ Real Results</div>
+    <h2 class="h2 editable">Women Like You<br>Already Transformed.</h2>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-card-header">
+          <div class="editable" style="font-weight:700;">Sarah, 42</div>
+          <div class="star-row"><img src="../images/star-rating.png" alt="5 stars" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"></div>
+        </div>
+        <p class="editable testimonial-quote">"I saw the lift before I even took it off. My friends asked what I did to my face."</p>
+        <div class="testimonial-photo">
+          <img src="../images/testimonial-heather.png" alt="Before and after" loading="lazy">
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-card-header">
+          <div class="editable" style="font-weight:700;">Emma, 55</div>
+          <div class="star-row"><img src="../images/star-rating.png" alt="5 stars" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"></div>
+        </div>
+        <p class="editable testimonial-quote">"5 minutes. That's it. And it actually works. No more expensive creams."</p>
+        <div class="testimonial-photo">
+          <img src="../images/testimonial-jennifer.png" alt="Before and after" loading="lazy">
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-card-header">
+          <div class="editable" style="font-weight:700;">Rachel, 48</div>
+          <div class="star-row"><img src="../images/star-rating.png" alt="5 stars" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"></div>
+        </div>
+        <p class="editable testimonial-quote">"The results last. My neck looks younger than it did 10 years ago."</p>
+        <div class="testimonial-photo">
+          <img src="../images/testimonial-sandra.png" alt="Before and after" loading="lazy">
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-card-header">
+          <div class="editable" style="font-weight:700;">Alisa, 39</div>
+          <div class="star-row"><img src="../images/star-rating.png" alt="5 stars" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"><img src="../images/star-rating.png" alt="" width="24" height="24"></div>
+        </div>
+        <p class="editable testimonial-quote">"I never believed in face gadgets. This changed everything."</p>
+        <div class="testimonial-photo">
+          <img src="../images/testimonial-alisa.png" alt="Before and after" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:60px;">
+      <a href="community.html" class="btn btn-outline">See More Stories →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA - BURST & SAVE -->
+<section class="section-gold">
+  <div class="section-inner anchor-target" id="burst-cta" data-section="BURST & SAVE CTA">
+    <h2 class="h2 editable">Drop Your Price.<br>Share with Friends.</h2>
+    <p class="lead" style="color:#333; margin-top:24px; margin-bottom:32px;" class="editable">
+      €69 full price. €19 if 5 friends click your link. Zero risk. Fully transparent.
+    </p>
+
+    <div class="grid-2" style="gap:60px; margin:40px 0;">
+      <div>
+        <h3 class="h3 editable">How It Works</h3>
+        <ol style="color:var(--gray); font-size:16px; line-height:1.8;">
+          <li class="editable">You get a personal link</li>
+          <li class="editable">Share it on Instagram, TikTok, email</li>
+          <li class="editable">Friends click (no signup needed)</li>
+          <li class="editable">For each friend = price drops more</li>
+          <li class="editable">5 friends = €50 discount unlocked</li>
+        </ol>
+      </div>
+      <div>
+        <h3 class="h3 editable">Why People Share</h3>
+        <ul style="color:var(--gray); font-size:16px; line-height:1.8; list-style:none; padding:0;">
+          <li class="editable">✓ They help you save €50</li>
+          <li class="editable">✓ They see a real number, not hype</li>
+          <li class="editable">✓ Your friends benefit too</li>
+          <li class="editable">✓ Everyone wins</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:60px;">
+      <a href="burst.html" class="btn btn-primary">Start Burst & Save →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="section-final-cta">
+  <div class="section-inner anchor-target" id="final-cta" data-section="FINAL CTA">
+    <div style="text-align:center;">
+      <h2 class="h2 editable">Ready?</h2>
+      <p class="lead editable">Join thousands of women who already lifted their skin. No serums. No surgery. Just 5 minutes a day.</p>
+      <a href="order.html" class="btn btn-gold" style="margin-top:32px;">Order Your Enerband Now →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer footer-figma">
+  <div class="footer-top">
+    <div class="footer-links">
+      <a href="home.html">Home</a>
+      <a href="ritual.html">How to Use</a>
+      <a href="science.html">Science</a>
+      <a href="clinical.html">Clinical</a>
+      <a href="faq.html">FAQ</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ENERBAND</p>
+  </div>
+</footer>
+
+<script src="../editor.js?v=12"></script>
+
+</body>
+</html>

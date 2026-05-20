@@ -4,105 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Enerband Demo Site — סיכום ותיעוד</title>
-<style>
-body { 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  background: #f5f5f5;
-  color: #333;
-  padding: 20px;
-  max-width: 900px;
-  margin: 0 auto;
-  direction: rtl;
-  text-align: right;
-}
-.header {
-  background: linear-gradient(135deg, #c9a961, #e8d4a3);
-  color: white;
-  padding: 40px;
-  border-radius: 12px;
-  margin-bottom: 40px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-}
-.header h1 { margin: 0 0 8px 0; font-size: 48px; }
-.header p { margin: 0; opacity: 0.9; }
-.section {
-  background: white;
-  padding: 24px;
-  margin-bottom: 24px;
-  border-radius: 8px;
-  border-right: 4px solid #c9a961;
-}
-.section h2 {
-  color: #c9a961;
-  margin-top: 0;
-}
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin: 20px 0;
-}
-.card {
-  background: #f9f9f9;
-  padding: 16px;
-  border-radius: 8px;
-  border-left: 3px solid #c9a961;
-}
-.card h3 { margin-top: 0; color: #0a0a0a; }
-.card p { margin: 8px 0 0 0; color: #666; font-size: 14px; }
-.code {
-  background: #f0f0f0;
-  padding: 12px;
-  border-radius: 4px;
-  font-family: monospace;
-  font-size: 13px;
-  margin: 12px 0;
-  direction: ltr;
-  text-align: left;
-  overflow-x: auto;
-}
-a {
-  color: #c9a961;
-  text-decoration: none;
-  font-weight: 600;
-}
-a:hover { text-decoration: underline; }
-.cta {
-  display: inline-block;
-  background: #0a0a0a;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 999px;
-  text-decoration: none;
-  margin-top: 12px;
-  font-weight: 600;
-  transition: transform 0.2s;
-}
-.cta:hover { transform: scale(1.05); text-decoration: none; }
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin: 20px 0;
-}
-.stat {
-  text-align: center;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
-}
-.stat-num {
-  font-size: 36px;
-  font-weight: 900;
-  color: #c9a961;
-}
-.stat-label {
-  font-size: 12px;
-  color: #666;
-  margin-top: 8px;
-  letter-spacing: 0.05em;
-}
-</style>
 </head>
 <body>
 
@@ -139,48 +40,48 @@ python3 -m http.server 8000
   
   <div class="grid">
     <div class="card">
-      <h3><a href="index.html">🏠 Home</a></h3>
-      <p>Landing page — הכל בעמוד אחד</p>
+      <h3 class="editable"><a href="pages/home.html">🏠 Home</a></h3>
+      <p class="editable">Landing page — הכל בעמוד אחד</p>
     </div>
     <div class="card">
-      <h3><a href="pages/ritual.html">⏱ The 5-Min Ritual</a></h3>
-      <p>איך להשתמש — 5 שלבים</p>
+      <h3 class="editable"><a href="pages/ritual.html">⏱ The 5-Min Ritual</a></h3>
+      <p class="editable">איך להשתמש — 5 שלבים</p>
     </div>
     <div class="card">
-      <h3><a href="pages/science.html">🔬 The Science</a></h3>
-      <p>טכנולוגיה — 24K זהב</p>
+      <h3 class="editable"><a href="pages/science.html">🔬 The Science</a></h3>
+      <p class="editable">טכנולוגיה — 24K זהב</p>
     </div>
     <div class="card">
-      <h3><a href="pages/clinical.html">👩‍⚕️ Clinical Proof</a></h3>
-      <p>Prof. Shemer + נתונים</p>
+      <h3 class="editable"><a href="pages/clinical.html">👩‍⚕️ Clinical Proof</a></h3>
+      <p class="editable">Prof. Shemer + נתונים</p>
     </div>
     <div class="card">
-      <h3><a href="pages/burst.html">🤝 Burst & Save</a></h3>
-      <p>ירידת מחיר דרך חברים</p>
+      <h3 class="editable"><a href="pages/burst.html">🤝 Burst & Save</a></h3>
+      <p class="editable">ירידת מחיר דרך חברים</p>
     </div>
     <div class="card">
-      <h3><a href="pages/faq.html">❓ Answers</a></h3>
-      <p>שאלות נפוצות</p>
+      <h3 class="editable"><a href="pages/faq.html">❓ Answers</a></h3>
+      <p class="editable">שאלות נפוצות</p>
     </div>
     <div class="card">
-      <h3><a href="pages/order.html">🛒 Order</a></h3>
-      <p>עמוד הזמנה</p>
+      <h3 class="editable"><a href="pages/order.html">🛒 Order</a></h3>
+      <p class="editable">עמוד הזמנה</p>
     </div>
     <div class="card">
-      <h3><a href="pages/thanks.html">🎉 Thank You</a></h3>
-      <p>אחרי קנייה</p>
+      <h3 class="editable"><a href="pages/thanks.html">🎉 Thank You</a></h3>
+      <p class="editable">אחרי קנייה</p>
     </div>
     <div class="card">
-      <h3><a href="pages/community.html">👯 Community</a></h3>
-      <p>UGC + Testimonials</p>
+      <h3 class="editable"><a href="pages/community.html">👯 Community</a></h3>
+      <p class="editable">UGC + Testimonials</p>
     </div>
     <div class="card">
-      <h3><a href="pages/influencer.html">⭐ Influencers</a></h3>
-      <p>Hub לממשיקי חשבון (חדש)</p>
+      <h3 class="editable"><a href="pages/influencer.html">⭐ Influencers</a></h3>
+      <p class="editable">Hub לממשיקי חשבון (חדש)</p>
     </div>
     <div class="card">
-      <h3><a href="pages/b2b.html">🏢 B2B Partners</a></h3>
-      <p>Portal לשותפים (חדש)</p>
+      <h3 class="editable"><a href="pages/b2b.html">🏢 B2B Partners</a></h3>
+      <p class="editable">Portal לשותפים (חדש)</p>
     </div>
   </div>
 </div>
@@ -330,5 +231,7 @@ python3 -m http.server 8000
   </p>
 </div>
 
+
+<script src="editor.js?v=1"></script>
 </body>
 </html>
