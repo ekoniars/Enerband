@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The 5-Min Ritual — Enerband</title>
-<link rel="stylesheet" href="../styles.css?v=3">
+<title>The Daily Ritual — Enerband</title>
+<link rel="stylesheet" href="../styles.css?v=33">
 </head>
 <body>
 
 <div class="demo-banner" style="display:flex; justify-content:space-between; align-items:center;">
-  <span>🎬 DEMO — Page: <strong>The 5-Min Ritual</strong> (How to Use)</span>
+  <span>🎬 DEMO — Page: <strong>The Daily Ritual</strong> (How to Use)</span>
   <div style="display:flex;gap:6px;">
     <button id="btn-mode" class="btn btn-outline" onclick="toggleEditMode()" style="padding:6px 12px; position:relative; font-size:16px; line-height:1;" title="Edit mode (click to switch to view)">&#9998;</button>
     <button id="btn-undo" class="btn btn-outline" onclick="editorUndo()" style="padding:6px 16px; position:relative; font-size:13px;" title="Undo">&#8592; Undo</button>
@@ -35,31 +35,25 @@ function clearCacheAndReload() {
   }
   window.location.href = window.location.pathname + '?v=' + t;
 }
-  });
-  var css = document.querySelector("link[rel=stylesheet]");
-  if (css) css.href = css.href.split("?")[0] + "?v=" + Date.now();
-  var t = Date.now();
-  window.location.href = window.location.pathname + "?v=" + t;
-}
 </script>
 
 <nav class="nav">
   <div class="nav-logo"><a href="home.html" style="color:inherit;text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 126 34" width="120" height="30"><path d="M117.9 31.2h-4.4v-3.7h4.4c2.4 0 4.3-1.9 4.3-4.3V23c0-2.4-1.9-4.3-4.3-4.3h0-4.4V15h4.4c4.5 0 8.1 3.5 8.2 8s-3.5 8.1-8 8.2h-.2 0zm6.1-19.5h-.6V8.5l-2-3.5h.7l1.6 2.8 1.5-2.8h.7L124 8.5v3.2zm-4.3 0h-.6v-6h-1.4V5h3.3v.7h-1.4l.1 6zM116.4 5h.6v6.7h-.6V5zm-3.7 6.7L110.1 5h.7l2 5.2 2-5.2h.7l-2.6 6.7h-.2zm-4.6-2.2h-2.6l-.9 2.2h-.7l2.9-6.7h.1l2.8 6.7h-.7l-.9-2.2zm-1.3-3.1l-1 2.4h2.1l-1.1-2.4zm-4.4 5.3l-2.2-3.1h-.3v3.1h-.6V5h1.2c.5 0 .9 0 1.4.1.4.1.7.3.9.6s.4.7.3 1.1c0 .3-.1.7-.2 1-.2.3-.4.5-.7.6-.4.2-.8.2-1.2.2l2.2 3.1h-.8zm-.5-3.9c.2-.1.4-.2.5-.4s.2-.4.2-.6-.1-.4-.2-.6-.3-.3-.4-.4c-.3-.1-.6-.1-.9-.1H100V8h1c.3 0 .6-.1.9-.2h0zm-6.4.7h2.6c0 .9-.3 1.8-.8 2.5-.6.6-1.4.9-2.2.9-1 0-2-.4-2.7-1.3-.5-.6-.8-1.4-.8-2.2 0-.6.1-1.2.4-1.8.6-1.1 1.7-1.8 2.9-1.7.5 0 1 .1 1.5.3a3.25 3.25 0 0 1 1.3 1l-.5.5c-.2-.4-.6-.7-1-.9s-.8-.3-1.2-.3c-.5 0-1 .1-1.4.4a2.41 2.41 0 0 0-1 1c-.2.4-.4.9-.4 1.4s.1 1 .4 1.4c.5.9 1.4 1.5 2.4 1.5.6 0 1.1-.2 1.6-.6.4-.4.7-.9.8-1.5h-1.9v-.6zm-10.2 3.4c-.9 0-1.7-.4-2.3-1-.6-.7-.9-1.5-.9-2.5 0-.6.1-1.2.4-1.8.3-.5.7-1 1.2-1.3s1-.5 1.6-.5c.9 0 1.7.4 2.3 1 1.2 1.4 1.2 3.5 0 5-.6.7-1.4 1.1-2.3 1.1m2.2-5c-.2-.4-.5-.8-.9-1-.4-.3-.8-.4-1.3-.4s-.9.1-1.3.4-.7.6-.9 1c-.2.5-.3 1-.3 1.5 0 .7.3 1.5.8 2s1.1.8 1.8.8c.5 0 .9-.1 1.3-.4s.7-.6.9-1c.2-.5.3-.9.3-1.5 0-.4-.2-.9-.4-1.4h0zm-2.3 15.3c2.2 1.6 2.8 4.7 1.2 6.9-.9 1.3-2.4 2.1-4.1 2.1H69.7h0l-6.2-10h17.2c.7 0 1.2-.6 1.2-1.2 0-.7-.6-1.2-1.2-1.2H52.4v10h-4.5v-24h10.9c3.8 0 6.9 3.1 6.9 6.9 0 1.1-.3 2.2-.8 3.2h15.9c2.7 0 5 2.2 5 5-.1.8-.3 1.6-.6 2.3h0zM58.4 9.3h-6V15h6c1.6 0 2.8-1.3 2.7-2.9 0-1.5-1.2-2.7-2.7-2.8M82.3 25H70.8l1.5 2.5h10c.7 0 1.3-.5 1.3-1.2s-.5-1.3-1.3-1.3h0zm-1.9-13.3l-2.2-3.1h-.3v3.1h-.6V5h1.2c.5 0 .9 0 1.4.1.4.1.7.3.9.6s.3.7.3 1.1c0 .3-.1.7-.2 1-.2.3-.4.5-.7.6-.4.2-.8.2-1.2.2l2.2 3.1h-.8zm-.5-3.9c.2-.1.4-.2.5-.4s.2-.4.2-.6-.1-.4-.2-.6-.3-.3-.4-.4c-.3-.1-.6-.1-.9-.1H78V8h1c.3 0 .6-.1.9-.2h0zm-6.5 0h2.8v.7h-2.8V11h2.8v.7h-3.4V5h3.5v.7h-2.9v2.1zM71.6 11v.7h-3.3l2.6-6h-2.3V5h3.2l-2.5 6h2.3zM33.8 4.8h12.9v4.5h-8.4V15h8.1v3.7h-8.1v5.5h8.4v4.5H33.8V4.8zm-15.2 8.1v15.8h-4.5V4.8h4.5l9.6 15.6V4.8h4.5v23.9h-4.5l-9.6-15.8zM0 4.8h12.9v4.5H4.5V15h8.1v3.7H4.5v5.5h8.4v4.5H0V4.8zm66.4 26.4h-5l-6.2-10h5l6.2 10zM86 21.9c.3-.7.5-1.4.5-2.2 0-2-1.1-3.8-2.8-4.8h8.1l9.9 16.2h-4.3l-2.2-3.7H91v3.7h-5.7c2.7-1.9 3.4-5.6 1.5-8.2-.2-.3-.4-.7-.8-1h0zm5.1 3.1h2.7l-2.7-4.4V25zm10.7 4.9L98 23.6V15h4.6l6.4 10.5V15h3.8v16.2h-4.6l-6.4-10.6v9.3z" fill="currentColor"/><path d="M21,34h8l-8-13V34z" fill="#51bc9c"/><path d="M18,0l8,13V0H18z" fill="#e35ea6"/></svg></a></div>
   <ul class="nav-links">
     <li><a href="home.html">Home</a></li>
-    <li><a href="ritual.html" class="active">The 5-Min Ritual</a></li>
+    <li><a href="ritual.html" class="active">The Daily Ritual</a></li>
     <li><a href="science.html">The Science</a></li>
     <li><a href="clinical.html">Clinical Proof</a></li>
-    <li><a href="burst.html">Burst & Save</a></li>
+    <li><a href="burst.html">Click & Earn</a></li>
     <li><a href="faq.html">Answers</a></li>
   </ul>
-  <a href="order.html" class="nav-cta">Drop My Price →</a>
+  <a href="order.html" class="nav-cta">Lower My Price →</a>
 </nav>
 
 <!-- HERO -->
 <section class="section anchor-target" id="ritual-hero" data-section="RITUAL — HERO">
   <div class="eyebrow">⏱ DAILY RITUAL</div>
-  <h1 class="h1"><span class="editable">5 Minutes.<br>One Ritual.<br>Lifted for Life.</span></h1>
+  <h1 class="h1"><span class="editable">10 Minutes.<br>One Ritual.<br>Lifted for Life.</span></h1>
   <p class="lead"><span class="editable">No serums. No screens. No effort. Just press play.</span></p>
   <div class="media-box vertical" style="max-width:400px; margin-top:32px;">VERTICAL VIDEO — Full ritual top to bottom</div>
 </section>
@@ -144,7 +138,7 @@ function clearCacheAndReload() {
     <div>
       <div class="step-num">📱</div>
       <h3 class="h3">Zoom Boost</h3>
-      <p>5 min before any call.</p>
+      <p>Right before any call.</p>
     </div>
   </div>
 </section>
@@ -155,12 +149,13 @@ function clearCacheAndReload() {
     <a href="ritual.html">Ritual</a>
     <a href="science.html">Science</a>
     <a href="clinical.html">Clinical</a>
-    <a href="burst.html">Burst</a>
+    <a href="burst.html">Click & Earn</a>
     <a href="faq.html">FAQ</a>
   </div>
   <p>© 2026 ENERBAND</p>
 </footer>
 
 <script src="../editor.js?v=3"></script>
+<script src="../burstbox.js?v=3"></script>
 </body>
 </html>

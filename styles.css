@@ -1,4 +1,6 @@
-/* ENERBAND DEMO SITE — SHARED STYLES */
+/* ENERBAND DEMO SITE - SHARED STYLES */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -109,7 +111,7 @@
   --gold-light: #e8d4a3;
   --black: #0a0a0a;
   --white: #ffffff;
-  --gray: #888;
+  --gray: #575757;
   --gray-light: #f5f5f5;
   --accent: #e35ea6;
 }
@@ -130,18 +132,20 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid #eee;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   padding: 18px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .nav.nav-dark {
-  background: var(--figma-primary-dark);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 .nav-logo {
   font-weight: 900;
@@ -183,11 +187,44 @@ body {
 }
 .nav-cta:hover { transform: scale(1.05); }
 
+/* iter8-17: nav CTA temporarily hidden per Barak — kept in HTML, not deleted */
+.nav-cta { display: none !important; }
+
+/* === HAMBURGER (mobile-only) === */
+.nav-burger {
+  display: none; /* shown via media query below */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  width: 40px;
+  height: 40px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+.nav-burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--black);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+.nav-dark .nav-burger span { background: var(--color-text-light, #fff); }
+.nav-burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+
 /* === HERO / SECTIONS === */
 .section {
   padding: 100px 40px;
   max-width: 1200px;
   margin: 0 auto;
+  --lw: 100;
+  transition: background 0.3s ease, border 0.3s ease;
 }
 .section-dark {
   background: var(--figma-primary-dark);
@@ -207,6 +244,56 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 100px 40px;
+}
+
+/* Dynamic layout width control with smooth easing */
+section[data-layout-width] {
+  --lw: 100;
+  border-inline: solid 2px transparent;
+  border-image: linear-gradient(180deg, rgba(219, 189, 133, 0) 0%, rgba(219, 189, 133, 0.6) 50%, rgba(219, 189, 133, 0) 100%) 1;
+}
+section[data-layout-width] .section-inner {
+  width: calc(var(--lw) * 1%);
+  margin-inline: auto;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), margin-inline 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+section[data-layout-width="100"] {
+  --lw: 100;
+  border-inline-color: transparent;
+}
+section[data-layout-width="95"] {
+  --lw: 95;
+  border-inline-color: rgba(219, 189, 133, 0.4);
+}
+section[data-layout-width="90"] {
+  --lw: 90;
+  border-inline-color: rgba(219, 189, 133, 0.5);
+}
+section[data-layout-width="85"] {
+  --lw: 85;
+  border-inline-color: rgba(219, 189, 133, 0.6);
+}
+section[data-layout-width="80"] {
+  --lw: 80;
+  border-inline-color: rgba(219, 189, 133, 0.7);
+}
+
+/* === CONTENT WIDTH CONTROL (Desktop) === */
+@media (min-width: 769px) {
+  section[data-cw] .section-inner {
+    max-width: var(--cw, 1200px);
+    transition: max-width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  section[data-cw="full"] .section-inner {
+    max-width: none;
+  }
+  section[data-cw].section-hero {
+    padding-inline: max(40px, calc((100% - var(--cw, 1200px)) / 2));
+    transition: padding-inline 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  section[data-cw="full"].section-hero {
+    padding-inline: 40px;
+  }
 }
 
 /* === TYPOGRAPHY === */
@@ -275,8 +362,38 @@ body {
 .btn-gold {
   background: var(--gold);
   color: var(--black);
+  position: relative;
+  z-index: 0;
 }
-.btn-gold:hover { transform: scale(1.05); }
+/* orbiting glow dot - JS sets --btn-gx/--btn-gy along pill perimeter */
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle 27px at var(--btn-gx, 50%) var(--btn-gy, 4px),
+      rgba(255,255,255,0.9) 0%, transparent 100%),
+    radial-gradient(circle 66px at var(--btn-gx, 50%) var(--btn-gy, 4px),
+      rgba(255,255,255,0.28) 0%, transparent 100%);
+  /* reveal only the 4px ring OUTSIDE the button */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: destination-out;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: subtract;
+  padding: 4px; /* content-box = button's exact footprint */
+  z-index: 1;
+  pointer-events: none;
+}
+.btn-gold > * { position: relative; z-index: 2; }
+.btn-gold:hover { transform: scale(1.03); }
+@media (prefers-reduced-motion: reduce) {
+  .btn-gold::before { display: none; }
+}
 .btn-outline {
   border-color: var(--black);
   color: var(--black);
@@ -329,25 +446,54 @@ body {
 }
 @media (max-width: 768px) {
   .grid-2, .grid-3, .grid-5 { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
+}
+
+/* iter8-17: nav burger triggers earlier than the 768px mobile breakpoint,
+   because 6 links need ~800px of horizontal space and wrap below that. */
+@media (max-width: 899px) {
+  .nav-burger { display: flex; }
+  .nav-links {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 24px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .nav-dark .nav-links {
+    background: #141414;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  .nav-links.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav-links a {
+    font-size: 15px;
+    padding: 10px 0;
+    display: block;
+  }
 }
 
 /* === SECTION ANCHOR HIGHLIGHT === */
 .anchor-target {
   scroll-margin-top: 100px;
-  position: relative;
 }
-.anchor-target::before {
-  content: "🔖 " attr(data-section);
-  position: absolute;
-  top: -32px;
-  left: 0;
-  font-size: 11px;
-  color: var(--gold);
-  letter-spacing: 0.15em;
-  font-weight: 700;
-  text-transform: uppercase;
-  opacity: 0.7;
+
+/* === SECTION LABELS (editor only) === */
+.view-mode .section-label {
+  display: none;
 }
 
 /* === STEPS === */
@@ -477,6 +623,42 @@ body {
 }
 .editable.editing {
   background: rgba(201, 169, 97, 0.25);
+}
+
+/* In reorder mode: the whole page is a frozen "static image" - drag only.
+   Interactive elements ignore pointer events so the mousedown passes through
+   to the section behind them and starts a drag instead. */
+body.reordering {
+  user-select: none;
+  -webkit-user-select: none;
+}
+body.reordering a,
+body.reordering button,
+body.reordering input,
+body.reordering select,
+body.reordering textarea,
+body.reordering label,
+body.reordering .btn,
+body.reordering iframe,
+body.reordering video,
+body.reordering [contenteditable] {
+  pointer-events: none !important;
+}
+body.reordering section { cursor: move !important; }
+body.reordering .editable,
+body.reordering .editable-label,
+body.reordering .editable-btn-text,
+body.reordering .editable-note {
+  cursor: move !important;
+}
+body.reordering .editable:hover,
+body.reordering .editable-label:hover,
+body.reordering .editable-btn-text:hover,
+body.reordering .editable-note:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 /* Button-specific editable styles */
@@ -688,16 +870,29 @@ body {
   word-break: break-word;
   overflow-y: auto;
 }
-.edt-html-view.expanded {
+.edt-html-wrap.expanded {
   position: fixed;
-  top: 60px;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  max-height: none;
+  top: 32px;
+  left: 32px;
+  right: 32px;
+  bottom: 32px;
   z-index: 10002;
-  border: 2px solid #999;
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.55), 0 12px 48px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+.edt-html-wrap.expanded .edt-html-bar {
+  border-radius: 8px 8px 0 0;
+}
+.edt-html-wrap.expanded .edt-html-view {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  border-radius: 0 0 8px 8px;
+  resize: none;
   padding: 16px;
 }
 .edt-html-bar {
@@ -715,7 +910,7 @@ body {
 }
 .edt-html-bar .zoom-label {
   font-size: 11px;
-  color: #888;
+  color: #575757;
   font-weight: 600;
   letter-spacing: -0.02em;
   min-width: 34px;
@@ -834,14 +1029,125 @@ body:not(.view-mode) .editable:hover {
 body.view-mode .editable {
   cursor: default;
 }
-body.view-mode .editable:hover {
+body.view-mode .editable:hover,
+body.view-mode .editable-label:hover,
+body.view-mode .editable-btn-text:hover,
+body.view-mode .editable-note:hover {
   outline: none;
+  background-color: transparent !important;
+  cursor: default !important;
+}
+
+/* === VIEW MODE - hidden bar + floating FAB + clean cursor === */
+body.view-mode .demo-banner { display: none !important; }
+body.view-mode #strip-settings-btn,
+body.view-mode #strip-menu,
+body.view-mode #strip-gap-add-btn { display: none !important; }
+
+/* floating pencil button - created by editor.js */
+#btn-edit-fab {
+  display: none;
+  position: fixed;
+  top: 50%;
+  right: 28px;
+  transform: translateY(-50%);
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: #111;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.55), 0 0 0 1px rgba(219,189,133,0.15);
+  transition: transform 0.15s, box-shadow 0.15s;
+  align-items: center;
+  justify-content: center;
+}
+#btn-edit-fab:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.65), 0 0 0 2px rgba(219,189,133,0.35);
+}
+body.view-mode #btn-edit-fab { display: flex; }
+
+/* cursor: default everywhere, pointer on links/buttons */
+body.view-mode,
+body.view-mode .editable,
+body.view-mode .editable * { cursor: default !important; }
+body.view-mode a,
+body.view-mode button,
+body.view-mode [role="button"],
+body.view-mode .editable a { cursor: pointer !important; }
+
+/* === SKIN MEMORY SECTION === */
+.section-skin-memory .skin-memory-steps {
+  display: flex;
+  justify-content: center;
+  gap: clamp(24px, 5vw, 80px);
+  margin-top: 20px;
+}
+.section-skin-memory .skin-memory-step {
+  flex: 0 1 220px;
+  text-align: center;
+}
+.section-skin-memory .skin-memory-icon {
+  margin-bottom: 16px;
+  opacity: 0.85;
+}
+@media (max-width: 640px) {
+  /* Mobile: each step becomes a row — icon on the left, text on the right.
+     The three steps still stack vertically inside .skin-memory-steps. */
+  .section-skin-memory .skin-memory-steps {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 28px;
+  }
+  .section-skin-memory .skin-memory-step {
+    flex: 1 1 auto;
+    max-width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    text-align: left;
+  }
+  .section-skin-memory .skin-memory-icon {
+    flex: 0 0 110px;
+    margin-bottom: 0 !important;
+  }
+  .section-skin-memory .skin-memory-icon img {
+    width: 110px !important;
+    height: auto;
+    display: block;
+    margin: 0 !important;
+  }
+  .section-skin-memory .skin-memory-step p {
+    flex: 1 1 auto;
+    text-align: left;
+    margin: 0;
+  }
+}
+
+/* === 3D EXPLORER PLACEHOLDER === */
+.section-3d-explorer { border-block: 1px solid rgba(219,189,133,0.08); }
+.explorer-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  border: 1px dashed rgba(219,189,133,0.18);
+  border-radius: 24px;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 /* === FOOTER === */
 .footer {
   background: var(--black);
-  color: #888;
+  color: #575757;
   padding: 60px 40px 30px;
   text-align: center;
   font-size: 13px;
@@ -957,7 +1263,8 @@ body.view-mode .editable:hover {
   gap: 12px;
   padding: 0 40px;
 }
-.strip-images img {
+.strip-images img,
+.strip-images video {
   width: 100%;
   height: auto;
   border-radius: var(--radius-md);
@@ -980,9 +1287,50 @@ body.view-mode .editable:hover {
   background: linear-gradient(to left, var(--figma-primary-dark), transparent);
 }
 @media (max-width: 768px) {
+  .image-strip-inner {
+    overflow: visible;
+  }
+  .strip-gradient {
+    display: none;
+  }
   .strip-images {
-    grid-template-columns: repeat(2, 1fr);
-    padding: 0 20px;
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 12px;
+    padding: 16px 7.5vw;
+    scroll-padding-inline: 7.5vw;
+  }
+  .strip-images::-webkit-scrollbar {
+    display: none;
+  }
+  .strip-images > video,
+  .strip-images > img {
+    flex: 0 0 85vw;
+    width: 85vw;
+    height: auto;
+    scroll-snap-align: center;
+    transform: scale(0.86);
+    opacity: 0.5;
+    transform-origin: center center;
+    will-change: transform, opacity;
+    border-radius: var(--radius-md);
+  }
+  .strip-images > .is-active {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .strip-images > .is-carousel-clone {
+    pointer-events: none;
+  }
+}
+@media (min-width: 769px) {
+  .strip-images > .is-carousel-clone {
+    display: none;
   }
 }
 
@@ -1147,7 +1495,32 @@ body.view-mode .editable:hover {
 }
 @media (max-width: 768px) {
   .testimonials-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 16px;
+    padding-bottom: 8px;
+    margin-top: 32px;
+  }
+  .testimonials-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .testimonials-grid > .testimonial-card {
+    flex: 0 0 85%;
+    max-width: 400px;
+    scroll-snap-align: center;
+  }
+  .testimonials-grid > .testimonial-card.is-carousel-clone {
+    pointer-events: none;
+  }
+}
+@media (min-width: 769px) {
+  .testimonials-grid > .testimonial-card.is-carousel-clone {
+    display: none;
   }
 }
 
@@ -1265,7 +1638,7 @@ body.view-mode .editable:hover {
   margin-bottom: 16px;
 }
 
-/* === FX — Visual Effects === */
+/* === FX - Visual Effects === */
 .fx-shine {
   background-image: linear-gradient(
     120deg,
@@ -1328,22 +1701,28 @@ body.view-mode .editable:hover {
   position: fixed;
   top: 24px;
   right: 32px;
-  width: 50px;
-  height: 50px;
-  background: none;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.45);
   border: none;
+  border-radius: 50%;
   cursor: pointer;
   z-index: 10001;
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background 0.2s ease;
 }
 .welcome-close svg {
-  width: 28px;
-  height: 28px;
-  stroke: #bbb;
+  width: 22px;
+  height: 22px;
+  stroke: #fff;
   stroke-width: 2.5;
-  transition: stroke 0.2s;
+}
+.welcome-close:hover {
+  background: rgba(0, 0, 0, 0.65);
 }
 .welcome-close:hover svg {
   stroke: #fff;
@@ -1463,7 +1842,7 @@ body.view-mode .editable:hover {
 }
 .welcome-icons-result {
   font-size: 15px;
-  color: #888;
+  color: #575757;
   margin-left: 8px;
   display: flex;
   align-items: center;
@@ -1518,3 +1897,2850 @@ body.view-mode .editable:hover {
   }
 }
 
+/* === STRIP STYLE PICKER (page builder) === */
+.strip-picker-card {
+  width: 720px;
+  max-width: 92vw;
+  padding: 32px 36px 40px;
+  direction: rtl;
+}
+.strip-picker-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.strip-picker-cat {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin: 24px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eee;
+}
+.strip-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.tpl-cell {
+  cursor: pointer;
+  border: 2px solid #ececec;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  background: #fff;
+}
+.tpl-cell:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(219,189,133,0.35);
+}
+.tpl-thumb {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  background: #faf8f3;
+  overflow: hidden;
+}
+.tpl-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #444;
+  text-align: center;
+  padding: 8px 4px;
+}
+@media (max-width: 600px) {
+  .strip-picker-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Builder strip layouts collapse to a single column on mobile */
+@media (max-width: 768px) {
+  .builder-cols { grid-template-columns: 1fr !important; }
+  .builder-imgtext { grid-template-columns: 1fr !important; }
+}
+
+/* === STRIP DIALOG TABS === */
+.sp-tabs {
+  display: flex;
+  gap: 4px;
+  direction: rtl;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 20px;
+}
+.sp-tab {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  font-family: inherit;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.sp-tab:hover { color: #555; }
+.sp-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* === STRIP DESIGN FORM === */
+#sp-panel-design { direction: rtl; }
+.sp-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 4px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.sp-field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  flex: 0 0 160px;
+}
+.sp-field-ctl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: flex-start;
+}
+.sp-field-ctl input[type="color"] {
+  width: 44px;
+  height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 2px;
+  background: #fff;
+}
+.sp-field-ctl input[type="range"] { flex: 1; max-width: 220px; cursor: pointer; }
+.sp-field-ctl select {
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  background: #fff;
+}
+.sp-val { font-size: 13px; font-weight: 700; color: var(--gold); min-width: 46px; }
+.sp-reset {
+  margin-top: 16px;
+  background: #f1f1f1;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  font-family: inherit;
+}
+.sp-reset:hover { background: #e4e4e4; }
+
+/* === STRIP DIALOG FOOTER === */
+.sp-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  direction: rtl;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+.sp-btn-save {
+  background: var(--gold);
+  color: #1b1b1b;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s;
+}
+.sp-btn-save:hover { transform: scale(1.04); }
+.sp-btn-cancel {
+  background: #f1f1f1;
+  color: #555;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.sp-btn-cancel:hover { background: #e4e4e4; }
+
+/* === SCROLL-IN ANIMATIONS === */
+body.anim-ready section[data-anim]:not(.anim-run) { opacity: 0; }
+section[data-anim].anim-run { animation-duration: 0.7s; animation-fill-mode: both; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+section[data-anim="fade"].anim-run { animation-name: spFade; }
+section[data-anim="fade-up"].anim-run { animation-name: spFadeUp; }
+section[data-anim="fade-down"].anim-run { animation-name: spFadeDown; }
+section[data-anim="fade-left"].anim-run { animation-name: spFadeLeft; }
+section[data-anim="fade-right"].anim-run { animation-name: spFadeRight; }
+section[data-anim="zoom"].anim-run { animation-name: spZoom; }
+section[data-anim="slide-up"].anim-run { animation-name: spSlideUp; }
+section[data-anim="bounce"].anim-run { animation-name: spBounce; animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes spFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spFadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spFadeDown { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spFadeLeft { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes spFadeRight { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes spZoom { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+@keyframes spSlideUp { from { transform: translateY(60px); } to { transform: translateY(0); } }
+@keyframes spBounce { 0% { opacity: 0; transform: translateY(50px); } 60% { opacity: 1; transform: translateY(-12px); } 100% { transform: translateY(0); } }
+
+/* FAQ Accordion */
+.faq-item {
+  border-bottom: 1px solid #e0ddd8;
+  padding: 0;
+}
+.faq-item:first-child {
+  border-top: 1px solid #e0ddd8;
+}
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  list-style: none;
+}
+.faq-question.editable {
+  cursor: pointer;
+}
+/* When a FAQ item is open, drop the hover background (keep cursor only) */
+.faq-item[open] .faq-question.editable:hover {
+  background: transparent !important;
+}
+/* In view-mode, .editable globally forces cursor: default !important and removes
+   hover background. FAQ rows are still interactive (they expand), so override
+   that for .faq-question specifically. */
+body.view-mode .faq-question.editable,
+body.view-mode .faq-question.editable:hover {
+  cursor: pointer !important;
+}
+body.view-mode .faq-question.editable:hover {
+  background-color: rgba(201, 169, 97, 0.12) !important;
+}
+body.view-mode .faq-item[open] .faq-question.editable:hover {
+  background-color: transparent !important;
+}
+.faq-question::-webkit-details-marker { display: none; }
+.faq-answer {
+  padding: 0 0 20px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--gray);
+}
+
+/* ==================== BURSTBOX ACTIVE BAR (Powered by Burst Marketing) ==================== */
+/* Figma: burstbox_active (Desktop) node 2862:10889 - bottom-docked overlay panel.
+   Adapted to vanilla + USD (not EUR) + banned-word-safe copy. */
+.bbx-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  animation: welcomeFadeIn 0.3s ease-out;
+}
+.bbx-overlay.hiding { animation: welcomeFadeOut 0.25s ease-in forwards; }
+
+.bbx-close {
+  position: absolute;
+  top: 24px;
+  inset-inline-end: 28px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  opacity: 1;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.bbx-close:hover { background: rgba(0, 0, 0, 0.7); transform: rotate(90deg); }
+.bbx-close svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; }
+
+.bbx-bar {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  max-height: 88vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: var(--font-primary);
+  animation: bbxSlideUp 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+/* grid items must be allowed to shrink below their content (nowrap link) width */
+.bbx-col { min-width: 0; }
+@keyframes bbxSlideUp {
+  from { transform: translateY(100%); opacity: 0.5; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bbx-bar, .bbx-overlay { animation-duration: 0.01ms; }
+}
+
+/* top tagline strip */
+.bbx-top {
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px max(28px, calc((100% - 1375px) / 2));
+}
+.bbx-tagline { color: #aaa; font-size: 16px; margin: 0; }
+.bbx-logout {
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  padding: 3px 14px 5px;
+  border-radius: 50px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* main 3-col area */
+.bbx-main {
+  background: #282828;
+  padding: 24px 32px 12px;
+  display: flex;
+  justify-content: center;
+}
+.bbx-inner {
+  width: 100%;
+  max-width: 1375px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.95fr) minmax(0, 1.15fr);
+  gap: 32px;
+  align-items: start;
+}
+.bbx-h { color: #fff; font-size: 24px; font-weight: 600; margin: 0; text-transform: capitalize; line-height: 1.2; }
+.bbx-h-sm { color: #fff; font-size: 16px; font-weight: 600; margin: 0; }
+.bbx-muted { color: #afafaf; font-size: 16px; margin: 0; line-height: 1.5; }
+
+/* Col A - price */
+.bbx-col-price { display: flex; flex-direction: column; gap: 14px; }
+.bbx-price-row { display: flex; align-items: center; gap: 14px; }
+.bbx-price-old { color: #aaa; font-size: 48px; font-weight: 700; text-decoration: line-through; line-height: 1; }
+.bbx-price-arrow { color: #aaa; font-size: 30px; line-height: 1; }
+.bbx-price-new { color: var(--figma-primary-gold); font-size: 48px; font-weight: 700; line-height: 1; }
+.bbx-order-btn {
+  align-self: flex-start;
+  border: 2px solid var(--figma-primary-gold);
+  color: var(--figma-primary-gold);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  min-width: 290px;
+  max-width: 400px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.bbx-order-btn:hover { background: var(--figma-primary-gold); color: #222; }
+.bbx-muted-stack { display: flex; flex-direction: column; gap: 10px; }
+.bbx-muted-stack p { color: #afafaf; font-size: 16px; margin: 0; line-height: 1.5; }
+
+/* Col B - discount ladder */
+.bbx-col-ladder { display: flex; flex-direction: column; gap: 16px; }
+.bbx-steps { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.bbx-step { display: flex; align-items: center; gap: 12px; padding-inline-start: 12px; color: #afafaf; }
+.bbx-step-ico { font-size: 22px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; }
+.bbx-step-ico img { width: 100%; height: 100%; display: block; }
+.bbx-step-n { font-weight: 600; font-size: 18px; min-width: 24px; }
+.bbx-step-n small { font-size: 14px; }
+.bbx-eq { font-size: 16px; }
+.bbx-off { font-weight: 700; font-size: 24px; min-width: 56px; display: flex; align-items: flex-end; justify-content: flex-end; gap: 2px; }
+.bbx-off small, .bbx-stepprice small { font-size: 10px; font-weight: 400; padding-bottom: 5px; text-transform: capitalize; }
+.bbx-stepprice { font-weight: 700; font-size: 24px; color: #7d7d7d; display: flex; align-items: flex-end; gap: 2px; }
+
+/* Col C - timer card */
+.bbx-card {
+  background: #343434;
+  border-radius: 14px;
+  padding: 24px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.bbx-wa {
+  background: #5ba324;
+  border: 4px solid #fff;
+  color: #fff;
+  font-size: 16px;
+  padding: 14px 16px;
+  border-radius: 9999px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: filter 0.2s ease;
+}
+.bbx-wa:hover { filter: brightness(1.08); }
+.bbx-wa svg { width: 20px; height: 20px; }
+.bbx-linkbox { display: flex; width: 100%; }
+.bbx-link {
+  flex: 1;
+  min-width: 0;
+  background: #fff;
+  color: #505050;
+  font-size: 16px;
+  padding: 16px 24px;
+  border-radius: 27px 0 0 27px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bbx-copy {
+  background: #2778ef;
+  border: none;
+  border-inline-start: 1px solid #1e62c7;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 16px 12px;
+  border-radius: 0 27px 27px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 100px;
+  justify-content: center;
+  transition: filter 0.2s ease;
+}
+.bbx-copy:hover { filter: brightness(1.1); }
+.bbx-copy svg { width: 16px; height: 20px; }
+.bbx-clock {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--figma-primary-gold);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+}
+.bbx-progress { background: #414141; border-radius: 4px; padding: 2px; width: 100%; }
+.bbx-progress-fill { background: #51bc9c; height: 4px; border-radius: 2px; width: 100%; transition: width 1s linear; }
+.bbx-timer-note { color: #e6e6e6; font-size: 16px; font-weight: 600; text-align: center; margin: 0; line-height: 1.4; }
+
+/* footer */
+.bbx-footer {
+  background: #222;
+  border-top: 1px solid #2f2f2f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px max(32px, calc((100% - 1375px) / 2));
+}
+.bbx-rights { color: #929292; font-size: 14px; margin: 0; }
+.bbx-bm { color: var(--figma-accent-blue); text-decoration: none; font-weight: 600; }
+.bbx-bm:hover { text-decoration: underline; }
+.bbx-foot-right { display: flex; align-items: center; gap: 12px; }
+.bbx-foot-right span { color: #929292; font-size: 14px; }
+.bbx-dots { display: inline-flex; gap: 3px; }
+.bbx-dots i { width: 6px; height: 6px; border-radius: 1px; background: #474747; display: block; }
+
+/* re-open tab (after dismiss) */
+.bbx-reopen {
+  position: fixed;
+  inset-inline-end: 0;
+  bottom: 24px;
+  z-index: 9998;
+  background: #282828;
+  color: var(--figma-primary-gold);
+  border: 1px solid var(--figma-primary-gold);
+  border-inline-end: none;
+  border-radius: 9999px 0 0 9999px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-primary);
+  cursor: pointer;
+  box-shadow: -2px 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* anon sign-up card (right column, default state) */
+.bbx-login {
+  background: #343434;
+  border-radius: 14px;
+  padding: 24px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bbx-social { display: flex; flex-direction: column; gap: 12px; padding-top: 8px; }
+.bbx-social-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-start;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 9999px;
+  padding: 11px 32px 11px 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--font-primary);
+  cursor: pointer;
+  width: 100%;
+  transition: filter 0.15s ease;
+}
+.bbx-social-btn:hover { filter: brightness(0.96); }
+.bbx-social-ico {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.bbx-social-ico svg { width: 18px; height: 18px; }
+
+/* state toggle: anon (default) shows login + hides active bits; .bbx-mode-active flips it */
+#bbxLogout, #bbxActiveCard, #bbxFootRight { display: none; }
+.bbx-mode-active #bbxLogout { display: inline-block; }
+.bbx-mode-active #bbxActiveCard { display: flex; }
+.bbx-mode-active #bbxFootRight { display: flex; }
+.bbx-mode-active #bbxLogin { display: none; }
+
+/* responsive */
+/* completed ladder steps (reflect clicks done) */
+.bbx-step { transition: color 0.25s ease; }
+.bbx-step.done { color: var(--figma-primary-gold); }
+.bbx-step.done .bbx-stepprice { color: var(--figma-gold-lighter); }
+
+/* price pulse when a new effect lands */
+@keyframes bbxPulse { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+.bbx-pulse { animation: bbxPulse 0.4s ease; display: inline-block; }
+
+/* demo sim controls (dev-only look) */
+.bbx-sim-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+.bbx-sim {
+  background: transparent;
+  border: 1px dashed #6b6b6b;
+  color: #9a9a9a;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.bbx-sim:hover { border-color: var(--figma-primary-gold); color: var(--figma-primary-gold); }
+
+@media (max-width: 980px) {
+  .bbx-inner { grid-template-columns: 1fr; gap: 24px; }
+  .bbx-bar { max-height: 92vh; }
+  .bbx-main { padding: 20px 20px 12px; }
+  .bbx-top, .bbx-footer { padding-inline: 20px; }
+  .bbx-card { padding: 20px; }
+  .bbx-order-btn { min-width: 0; width: 100%; max-width: none; }
+  .bbx-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .bbx-price-old, .bbx-price-new { font-size: 38px; }
+  .bbx-tagline { font-size: 14px; }
+}
+
+
+/* ==========================================================================
+   System bar - post-signup, bottom-docked
+   Dark at rest. Top strip of the open BurstBox flashes pink on notifications.
+   ========================================================================== */
+
+/* ---- Closed dark bar (always dark, no pink) ---- */
+#pb-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 9997;
+  background: #1a1a1a;
+  border-top: 1px solid rgba(255,255,255,.09);
+  box-shadow: 0 -4px 24px rgba(0,0,0,.55);
+  cursor: pointer;
+  display: none;
+  user-select: none;
+}
+#pb-bar:hover { background: #222; }
+#pb-bar .pb-inner {
+  max-width: 1440px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center; gap: 16px;
+  padding: 13px 28px;
+  min-height: 48px;
+  box-sizing: border-box;
+  font-family: var(--font-primary,'Inter',sans-serif);
+}
+.pb-tagline {
+  color: rgba(255,255,255,.45); font-size: 13px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pb-chevron {
+  color: rgba(255,255,255,.3); font-size: 20px; line-height: 1;
+  justify-self: center; transition: color .2s, transform .2s;
+}
+#pb-bar:hover .pb-chevron { color: rgba(255,255,255,.65); transform: translateY(-2px); }
+.pb-timer-mini {
+  color: rgba(255,255,255,.45); font-size: 13px;
+  text-align: right; justify-self: end; white-space: nowrap;
+}
+.pb-timer-mini b { color: rgba(255,255,255,.85); font-weight: 700; }
+
+/* ---- BurstBox top strip - pink flash when notification fires ---- */
+.bbx-top { transition: background 0.35s ease; }
+.bbx-top--live {
+  position: relative;
+  overflow: hidden;
+}
+.bbx-top--live::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    120deg,
+    transparent 0%, transparent 40%,
+    rgba(219, 189, 133, 0.22) 50%,
+    transparent 60%, transparent 100%
+  );
+  background-size: 300% auto;
+  animation: fx-shimmer 5s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+.bbx-top--live > * { position: relative; z-index: 1; }
+.bbx-top--live .bbx-tagline { display: none; }
+.bbx-notif-msg {
+  display: none; flex: 1; min-width: 0;
+  color: #fff; font-size: 14px; font-weight: 500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.bbx-top--live .bbx-notif-msg { display: block; }
+
+@media (max-width: 700px) {
+  #pb-bar .pb-inner { padding: 12px 16px; grid-template-columns: 1fr auto; }
+  .pb-timer-mini { display: none; }
+  .pb-tagline { font-size: 12px; }
+}
+
+
+</style>
+<style>
+/* === ITERATION 1: FRAME === */
+/* ============================================================================
+   ITERATION 1.3 - CENTERED 1536 FRAME
+   "הבלוק המרכזי 1536 ממורכז. הרקעים נמשכים עד הקצוות.
+    הוידאו של ה-Hero חי בתוך הבלוק, לא נצמד לקצה."
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. משתני המסגרת - שתי נקודות שליטה בלבד
+   --------------------------------------------------------------------------- */
+:root {
+  --frame-max-width: 1536px;       /* רוחב הבלוק החי */
+  --frame-padding-x: 40px;         /* padding פנימי משני הצדדים */
+
+  /* דריסת צבע טקסט בהיר על רקע כהה: #afafaf → #d3d3d3 (פחות נבלע) */
+  --color-text-light: #d3d3d3;
+  --figma-neutral-light-gray: #d3d3d3;
+  --figma-text-light: #d3d3d3;
+}
+
+/* דריסה ישירה ב-BurstBox panel (השתמש ב-#afafaf hardcoded ולא ב-variable) */
+.bbx-muted,
+.bbx-muted-stack p,
+.bbx-step {
+  color: #d3d3d3 !important;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --frame-padding-x: 20px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   2. כל סטריפ - הבלוק ממורכז, התוכן מיושר שמאל
+       הרקעים (במחלקות section-dark/light/white/gold) כבר full-width במקור.
+   --------------------------------------------------------------------------- */
+.section-dark .section-inner,
+.section-light .section-inner,
+.section-white .section-inner,
+.section-gold .section-inner,
+.section-final-cta .section-inner {
+  max-width: var(--frame-max-width);
+  margin-inline: auto;
+  padding-inline: var(--frame-padding-x);
+  text-align: left;
+}
+
+/* ---------------------------------------------------------------------------
+   3. HERO - נכנס לאותה מסגרת. הוידאו תופס את העמודה הימנית של הבלוק,
+       לא של ה-viewport.
+
+       הרקע: במקור ה-section-hero הוא max-width: none עם רקע שחור.
+       במקום להגביל max-width (שאז הרקע יחתך), אנחנו משאירים אותו full-width
+       וה-padding-inline דוחק את ה-grid הפנימי לאזור 1536 במרכז.
+       זו אותה טכניקה שמשמשת את ה-nav.
+   --------------------------------------------------------------------------- */
+.section-hero {
+  /* ה-max-width: none נשאר מהמקור - הרקע יזרום עד הקצוות */
+  padding-inline: max(
+    var(--frame-padding-x),
+    calc((100% - var(--frame-max-width)) / 2 + var(--frame-padding-x))
+  );
+  /* מקטינים את ה-padding-bottom מ-80 ל-40 כדי לחבר את ה-Hero לרצועת ההוכחה */
+  padding-block-end: 40px;
+}
+
+/* ה-CTA wrapper ב-Hero יש לו inline margin: 32px 0 48px.
+   מקטינים את ה-margin-bottom שלו מ-48 ל-16, להידוק נוסף לפני הרצועה. */
+.section-hero .hero-content > div[style*="margin:32px"],
+.section-hero .hero-content > div[style*="margin: 32px"] {
+  margin-block-end: 16px !important;
+}
+
+/* ה-hero-content במקור יש לו padding-left:40px נוסף - מנטרלים כדי שהקצה
+   השמאלי של ה-Hero יסונכרן עם קצה הסטריפים האחרים */
+.hero-content {
+  padding-left: 0 !important;
+}
+
+/* ה-hero-image במקור היה max-width:90% + margin-left:auto, שדוחק אותו ימינה
+   בתוך העמודה - עכשיו מוגבל ל-568px (הגודל המקורי של hero-product.png 568×396)
+   ויושב בקצה הימני של העמודה. */
+.hero-image {
+  max-width: 568px;
+  margin-left: auto;
+  margin-right: 0;
+  overflow: visible;       /* כדי לאפשר להילה הוורודה של התמונה לחרוג */
+}
+
+/* התמונה החדשה - PNG עם שקיפות והילה רכה, לא צריך border-radius */
+.hero-image img {
+  border-radius: 0 !important;
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   4. NAV - רקע full-width, תוכן ממורכז בתוך מסגרת 1536
+       הפדינג מותאם דינמית: על מסכים רחבים מ-1536, ה-padding ימלא את השוליים.
+       על מסכים צרים יותר, ה-padding יורד למינימום.
+   --------------------------------------------------------------------------- */
+.nav {
+  padding-block: 18px;
+  padding-inline: max(
+    var(--frame-padding-x),
+    calc((100% - var(--frame-max-width)) / 2 + var(--frame-padding-x))
+  );
+}
+
+/* ה-nav-dark: שמרנו על האפקט frosted (rgba + blur).
+   הקו התחתון הומר ל-box-shadow כדי שלא יראה לא-אחיד בצדדים כשיש blur,
+   בעיה שקיימת ב-border-bottom רגיל עם רקע שקוף. */
+.nav.nav-dark {
+  border-bottom: none;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* גם ה-nav הלבן: אותו טיפול לעקביות */
+.nav:not(.nav-dark) {
+  border-bottom: none;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* HERO embraces the nav: ה-section מתחיל ב-y=0 (חודר תחת ה-nav במישור גיאוגרפי),
+   ה-nav יושב מעליו ב-z-index 100. הפתרון פותר את הבעיה שבה ה-backdrop-filter
+   של ה-nav היה רואה את ה-body הלבן בטעינה ראשונית - עכשיו הוא רואה תמיד את
+   הרקע הכהה של ה-hero. ה-padding-top גדל בגובה ה-nav כדי שהתוכן ישאר במקומו.
+   --nav-height מוגדר ב-:root למטה. */
+.section-hero {
+  margin-top: calc(-1 * var(--nav-height));
+  padding-block-start: calc(var(--nav-height) + 80px);
+}
+@media (max-width: 768px) {
+  .section-hero {
+    padding-block-start: calc(var(--nav-height) + 60px);
+  }
+}
+
+:root {
+  --nav-height: 80px;
+}
+
+/* ---------------------------------------------------------------------------
+   5. IMAGE STRIP - באותה מסגרת
+   --------------------------------------------------------------------------- */
+.section-image-strip {
+  padding: 0 0 60px;
+}
+
+.image-strip-inner {
+  max-width: var(--frame-max-width);
+  margin-inline: auto;
+  padding-inline: var(--frame-padding-x);
+}
+
+.strip-images {
+  padding: 0;
+  gap: 8px;
+}
+
+.strip-images img,
+.strip-images video {
+  width: 100%;
+  aspect-ratio: 640 / 270;     /* sinema 21:9 - תואם את גודלם האמיתי של הסרטונים אחרי הסרת ה-letterbox */
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+.strip-gradient {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .strip-images {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 12px;
+    padding: 16px 7.5vw;
+    scroll-padding-inline: 7.5vw;
+  }
+  .strip-images::-webkit-scrollbar {
+    display: none;
+  }
+  .strip-images > video,
+  .strip-images > img {
+    flex: 0 0 85vw;
+    width: 85vw;
+    aspect-ratio: 640 / 270;
+    object-fit: cover;
+    background-color: #1a1a1a;
+    scroll-snap-align: center;
+    transform: scale(0.86);
+    opacity: 0.5;
+    transform-origin: center center;
+    will-change: transform, opacity;
+  }
+  .strip-images > .is-active {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .strip-images > .is-carousel-clone {
+    pointer-events: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   6. עקיפת inline-styles של text-align:center על divים פנימיים
+   --------------------------------------------------------------------------- */
+section .section-inner > div[style*="text-align:center"],
+section .section-inner > div[style*="text-align: center"] {
+  text-align: left !important;
+}
+
+.section-gold .section-inner > div[style*="max-width:640px"],
+.section-gold .section-inner > div[style*="max-width: 640px"] {
+  max-width: 640px !important;
+  margin-inline-start: 0 !important;
+  margin-inline-end: auto !important;
+}
+
+/* FAQ - re-center the header block and the 720px questions container
+   (override of the global left-align that applies to other sections). */
+#faq > div[style*="text-align:center"],
+#faq > div[style*="text-align: center"] {
+  text-align: center !important;
+}
+#faq > div[style*="max-width:720px"],
+#faq > div[style*="max-width: 720px"] {
+  margin-inline: auto !important;
+}
+
+.section-gold .btn-gold,
+.section-final-cta .btn-gold {
+  margin-inline-start: 0 !important;
+  margin-inline-end: auto !important;
+}
+
+.section-gold div[style*="flex-direction:column"][style*="align-items:center"],
+.section-final-cta div[style*="flex-direction:column"][style*="align-items:center"] {
+  align-items: flex-start !important;
+}
+
+/* ---------------------------------------------------------------------------
+   7. ויזואלים פנימיים שממלאים את השטח שלהם בתוך הסטריפ
+   --------------------------------------------------------------------------- */
+.science-image,
+.science-image img {
+  width: 100%;
+}
+
+.ritual-video-wrap,
+.ritual-video-wrap .ritual-video-img {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   8. Skin Memory - יוצא דופן מודע מהיישור-שמאל הגלובלי.
+       הסקציה היא pull-quote קצר ("Skin remembers. Like muscle.") פלוס 3 שלבים.
+       על מסך רחב הטקסט הקצר נראה shrink-ed לקצה שמאל ולא מאוזן.
+       מחזיר למרכז כי זה הקסם של pull-quote.
+   --------------------------------------------------------------------------- */
+.section-skin-memory .section-inner {
+  text-align: center !important;
+}
+.section-skin-memory .section-inner > div[style*="text-align:center"] {
+  text-align: center !important;
+}
+.skin-memory-steps {
+  justify-content: center;
+}
+
+/* האייקונים - מ-48×48 ל-clamp(64, 5vw, 88). יותר נוכחות, פחות חוויית
+   שלוש pin-dots ויותר חוויית שלושה stages חזותיים. */
+.section-skin-memory .skin-memory-icon svg {
+  width: clamp(64px, 5vw, 88px);
+  height: clamp(64px, 5vw, 88px);
+}
+.section-skin-memory .skin-memory-icon {
+  margin-bottom: 24px;  /* היה 16 - נשימה שתואמת לגודל החדש */
+}
+
+/* החלפת SVG ב-GIF אנימטיבי (band-turntable.gif, 310×212).
+   75% מהגודל הקודם: clamp(140,14vw,200) → clamp(105,10.5vw,150). */
+.section-skin-memory .skin-memory-icon img {
+  width: clamp(105px, 10.5vw, 150px);
+  height: auto;
+  display: block;
+  margin-inline: auto;
+}
+
+/* טקסט מתחת לאייקונים - Body במקום Lead (דרסה את ה-typography attribute selector) */
+.section-skin-memory .skin-memory-step p {
+  font-size: var(--fs-body) !important;
+}
+
+/* "Every click = $10" + "Or just get it now" ב-Hero - Body במקום Lead.
+   טרגוט ספציפי ל-section-hero בלבד - הכפתורים (.btn-gold) מוגנים על-ידי ה-rule
+   שלהם, ושאר ה-18px (Skin Memory) ב-section אחר ולא יושפע. */
+.section-hero div[style*="font-size:21px"],
+.section-hero div[style*="font-size: 21px"],
+.section-hero div[style*="font-size:18px"],
+.section-hero div[style*="font-size: 18px"] {
+  font-size: var(--fs-body) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   12. TESTIMONIAL VIDEO PLAYER - וידאו עם poster + play button.
+       - default: poster רואים, וידאו נסתר, play button overlay
+       - לחיצת play: poster + button נעלמים, וידאו פועל
+       - mutual exclusivity: וידאו אחר פעיל = הקודם נעצר וחוזר ל-poster
+       - on ended: חוזר ל-poster
+   --------------------------------------------------------------------------- */
+.testimonial-video-wrap {
+  position: relative;
+  cursor: pointer;
+}
+.testimonial-video-wrap .video-poster {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.testimonial-video-wrap .testimonial-video {
+  width: 100%;
+  height: auto;
+  display: none;
+  background: #000;
+}
+.testimonial-video-wrap.is-playing .video-poster,
+.testimonial-video-wrap.is-playing .video-play-btn {
+  display: none;
+}
+.testimonial-video-wrap.is-playing .testimonial-video {
+  display: block;
+}
+
+/* Play button overlay - ממורכז, רקע כהה שקוף עם משולש לבן (בלי ה-ring הלבן) */
+.video-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;   /* מנטרל styling default של button ב-iOS/Safari */
+  appearance: none;
+  background: rgba(20, 20, 20, 0.7);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  padding-left: 3px;          /* התאמה קלה אחרי הסרת ה-border 2px - שומר על מרכוז המשולש */
+  transition: background 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.video-play-btn:hover {
+  background: rgba(20, 20, 20, 0.9);
+}
+.video-play-btn svg {
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+.video-play-btn:hover svg {
+  transform: scale(1.08);     /* scale רק על ה-SVG - ה-button נשאר ב-position זהה */
+}
+
+/* גוון רקע ספציפי לכל סטריפ כהה (היו זהים כי שניהם section-dark) */
+.section-testimonials { background: #232322; }
+.section-skin-memory { background: #2c2c2a; }
+
+/* תמונה ב-The Technology - לא לעבור את גודל המקורי 568×396 של 24k-gold.png.
+   ממורכזת בעמודה השמאלית של ה-grid. */
+.science-image {
+  max-width: 568px;
+  margin-inline: auto;
+}
+
+/* תמונה ב-Proven Results - דמות 3D על רקע לבן אטום, גודל מקורי 600×509.
+   המקור הגביל ל-400 + border-radius; ברקע לבן אטום ה-border-radius עדיין מיותר. */
+.clinical-image img {
+  max-width: 600px !important;
+  border-radius: 0 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   13. IMAGE PLACEHOLDERS - placeholders זמניים ב-Technology / Proven Results.
+       שומרים על proportion התמונה המקורית כדי שה-layout של ה-section לא ישתנה.
+       Technology: 568×396 (aspect 568/396 ≈ 7:5)
+       Proven Results: 600×509 (aspect 600/509 ≈ 1.18 - קרוב לריבועי)
+   --------------------------------------------------------------------------- */
+.image-placeholder {
+  width: 100%;
+  background: linear-gradient(135deg, #ececec, #f8f8f8);
+  border: 2px dashed #c8c8c8;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.image-placeholder::before {
+  content: attr(data-label);
+}
+
+.science-image .image-placeholder {
+  aspect-ratio: 568 / 396;
+  max-width: 568px;
+  margin-inline: auto;
+}
+.clinical-image .image-placeholder {
+  aspect-ratio: 600 / 509;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   14. DAILY RITUAL STEPS - 5 cards של negative-space cutout numbers.
+       - Layout: 5 ב-row (desktop רחב) → 3+2 (desktop צר/tablet) → 1col (mobile)
+       - Card: number gold squircle משמאל, h3+p מימין
+       - The "cutout" effect: text color זהה ל-section background
+   --------------------------------------------------------------------------- */
+.ritual-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 32px;
+  margin-bottom: 60px;
+}
+
+@media (max-width: 768px) {
+  .ritual-steps {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.ritual-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  text-align: left;
+}
+
+/* SVG ינלי עם החור של הספרה כ-path אמיתי (evenodd fill-rule).
+   ה-fill מובנה ב-SVG (#dbbd85). אם נצטרך לשנות בעתיד - אפשר ב-CSS עם currentColor. */
+.ritual-num {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.ritual-content h3 {
+  margin: 0 0 8px;
+}
+.ritual-content p {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   15. BTN-GOLD על רקע זהוב - הפיכה לכהה (אחרת זהב על זהב = בלתי נראה).
+       background ו-hover שניהם #0a0a0a עם טקסט לבן.
+       ה-rotating glow (::before), scale hover, max-width, font-size - נשארים.
+   --------------------------------------------------------------------------- */
+.section-gold .btn-gold,
+.section-gold .btn-gold:hover {
+  background: #0a0a0a;
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   16. FOOTER - מסתירים זמנית את ה-footer-links (החלטה סופית בהמשך).
+       footer-top נשאר אבל בלי padding כדי שלא יישאר חלל ריק.
+       footer-bottom רקע #232322.
+   --------------------------------------------------------------------------- */
+.footer-links {
+  display: none;
+}
+
+.footer-figma .footer-top {
+  padding: 0;
+}
+
+.footer-figma .footer-bottom {
+  background: #232322;
+}
+
+/* ---------------------------------------------------------------------------
+   9. CURSOR FIX - ה-`<span class="editable">` בתוך כפתורים יורש את ה-cursor
+       של ההורה (pointer), במקום ה-cursor:text של .editable שמרגיש כאילו
+       הטקסט אינו לחיץ. הקליק עצמו תמיד עבד (event bubbling), זו בעיית UX
+       ויזואלית בלבד.
+   --------------------------------------------------------------------------- */
+.btn .editable,
+.btn .editable *,
+a.btn-gold .editable,
+a.nav-cta .editable {
+  cursor: inherit !important;
+}
+
+/* ---------------------------------------------------------------------------
+   10. TESTIMONIALS - שינויים קלים בלבד:
+       - שורת הכוכבים מתחת לשם (flex-direction: column ב-header)
+       - שם + גיל בגודל Lead
+       (ה-grid layout, padding, ו-order נשארו לפי הקיים במקור.)
+   --------------------------------------------------------------------------- */
+
+/* Header - שם בשורה אחת, כוכבים מתחת */
+.testimonial-card-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* שם + גיל בגודל Lead - specificity מוגבר */
+section.section-dark .testimonial-card-header > div:first-child {
+  font-size: var(--fs-lead) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   9. 3D Explorer - placeholder ממורכז (הוחזר למרכז ב-iter8-9+)
+   styles.css נותן margin:0 auto + align-items:center; ה-inline על
+   .section-inner נותן text-align:center. אין צורך בדריסה כאן.
+   --------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   10. Final CTA
+   --------------------------------------------------------------------------- */
+.section-final-cta .section-inner > div[style*="text-align:center"] {
+  text-align: left !important;
+}
+.section-final-cta .lead {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* ---------------------------------------------------------------------------
+   11. כותרות יורשות יישור מההורה
+   --------------------------------------------------------------------------- */
+section .section-inner .h2,
+section .section-inner .h3,
+section .section-inner .lead,
+section .section-inner p {
+  text-align: inherit;
+}
+
+
+/* ---------------------------------------------------------------------------
+   12. Click to Earn - layout דו-עמודי (טקסט שמאל / תמונה ימין)
+   במובייל: stack לפי סדר HTML (טקסט מעל תמונה), בעקבות פטרן science-layout
+   --------------------------------------------------------------------------- */
+.click-to-earn-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.click-to-earn-text {
+  text-align: left;
+}
+.click-to-earn-text .lead,
+.click-to-earn-text p {
+  margin-left: 0;
+  margin-right: auto;
+}
+.click-to-earn-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.click-to-earn-cta .btn-gold {
+  justify-content: center !important;
+}
+.click-to-earn-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.click-to-earn-image img {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  display: block;
+}
+@media (max-width: 768px) {
+  .click-to-earn-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .click-to-earn-text {
+    text-align: center;
+  }
+  .click-to-earn-text .lead,
+  .click-to-earn-text p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .click-to-earn-cta {
+    align-items: center;
+  }
+  .click-to-earn-image img {
+    max-width: 220px;
+  }
+}
+
+
+
+/* ----------------------------------------------------------------------------
+   FINAL CTA - 2-column layout (image LEFT / text RIGHT)
+   Mobile: stacks (image on top, text below) — same pattern as click-to-earn
+   --------------------------------------------------------------------------- */
+.final-cta-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: left;
+}
+.final-cta-text {
+  text-align: left;
+}
+.final-cta-text .lead {
+  margin-left: 0;
+  margin-right: auto;
+}
+.final-cta-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 32px;
+}
+.final-cta-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.final-cta-image img,
+.final-cta-image video {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+@media (max-width: 768px) {
+  .final-cta-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    text-align: center;
+  }
+  .final-cta-text {
+    text-align: center;
+  }
+  .final-cta-text .lead {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .final-cta-buttons {
+    align-items: center;
+  }
+  .final-cta-image img,
+  .final-cta-image video {
+    max-width: 320px;
+  }
+}
+
+/* Section background colors */
+#product-explorer { background-color: #1b1b1b; }
+#ritual { background-color: #232322; }
+#training-progress { background-color: #2c2c2a; }
+</style>
+<style>
+/* === ITERATION 2: TYPOGRAPHY === */
+/* ============================================================================
+   ITERATION 2 - TYPOGRAPHY SYSTEM
+   "שכבה אחת אמיתית: tokens → classes → דריסה של inline overrides."
+
+   החלטות:
+   1. הפונט: Hero_New לא נטען בשום מקום בקוד המקור. עד שיהיה קובץ פונט
+      רשמי, אנחנו טוענים את Inter מ-Google Fonts. אם יש קובץ של Hero_New,
+      צריך @font-face במקום ה-@import.
+   2. Scale: 8 רמות סמנטיות (display / section / card / stat / lead / body /
+      small / micro), נע פלואידית עם clamp(min, vw, max).
+   3. משקלים: 4 בלבד (regular / medium / bold / black). המשקלים 100/300
+      הוסרו מהסיסטמה - הם לא היו בשימוש בפועל.
+   4. Line-heights ו-letter-spacing: tokens סמנטיים, לא ערכי pixel קבועים.
+   ============================================================================ */
+
+
+:root {
+  /* ===== FONT FAMILY ===== */
+  --font-primary: "Inter", "Hero_New", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* ===== TYPE SCALE (semantic, fluid) =====
+     שמות לפי שימוש, לא לפי גודל מספרי                              min      preferred  max */
+  --fs-display:  clamp(40px, 6vw,    72px);  /* Hero H1 - הרגע הכי גדול */
+  --fs-section:  clamp(32px, 4.5vw,  56px);  /* כותרות סטריפים (.h1 / .h2) */
+  --fs-card:     clamp(20px, 2vw,    24px);  /* כותרות כרטיסים (.h3) */
+  --fs-stat:     clamp(40px, 5vw,    64px);  /* "31%", "$10", "5 min" */
+  --fs-lead:     clamp(18px, 1.6vw,  22px);  /* פסקה מובילה */
+  --fs-body:     16px;                        /* גוף טקסט */
+  --fs-small:    14px;                        /* טקסט משני, labels */
+  --fs-micro:    12px;                        /* eyebrows, footnotes */
+
+  /* ===== WEIGHTS (4 active) ===== */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-bold:     700;
+  --fw-black:    900;
+
+  /* ===== LINE HEIGHTS ===== */
+  --lh-display:  0.95;
+  --lh-heading:  1.05;
+  --lh-card:     1.2;
+  --lh-body:     1.6;
+  --lh-tight:    1.3;
+
+  /* ===== LETTER SPACING ===== */
+  --ls-display:  -0.03em;
+  --ls-heading:  -0.02em;
+  --ls-normal:    0;
+  --ls-eyebrow:   0.15em;
+}
+
+/* ============================================================================
+   BASE
+   ============================================================================ */
+body {
+  font-family: var(--font-primary);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+}
+
+/* ============================================================================
+   CLASSES - משתמשים בטוקנים, לא ב-pixel קבוע
+   ============================================================================ */
+
+/* H1 רגיל = section size; ב-Hero ספציפית הוא display (override למטה) */
+.h1 {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+  margin-bottom: 24px;
+}
+
+/* H1 של ה-Hero - הרגע הגדול */
+.section-hero .h1 {
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+}
+
+/* H2 = כותרת ראשית של סטריפ */
+.h2 {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+  margin-bottom: 24px;
+}
+
+/* H3 = כותרת כרטיס / step / sub-section */
+.h3 {
+  font-size: var(--fs-card);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-card);
+  letter-spacing: var(--ls-normal);
+  margin-bottom: 16px;
+}
+
+/* Lead - פסקה מובילה */
+.lead {
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-regular);
+  line-height: 1.4;
+  color: var(--gray);
+  margin-bottom: 32px;
+  max-width: 640px;
+  letter-spacing: var(--ls-normal);
+}
+
+/* ב-Hero ה-lead מתפקד כסאב-טייטל (לא כפסקה ארוכה) - צריך לקבל את אותו
+   רוחב טבעי כמו ה-H2 שמעליו, ולא להישבר מוקדם. */
+.section-hero .lead {
+  max-width: none;
+}
+
+/* Stat displays - "31% More Collagen", "$10", "5 min" */
+.stat-num {
+  font-size: var(--fs-stat);
+  font-weight: var(--fw-black);
+  line-height: 1;
+  letter-spacing: var(--ls-heading);
+}
+.stat-label {
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+/* Section labels (eyebrows) - gold badge עם black text */
+.section-label,
+.eyebrow {
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+/* בתוך section-gold הרקע זהוב - מהפכים את ה-badge לשחור עם טקסט זהוב */
+.section-gold .section-label {
+  background: var(--color-black);
+  color: var(--gold);
+}
+
+/* ============================================================================
+   NAV - טיפוגרפיה ייעודית
+   ============================================================================ */
+.nav-logo {
+  font-weight: var(--fw-black);
+  letter-spacing: var(--ls-heading);
+}
+.nav-links a {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+}
+.nav-cta {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-bold);
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+.btn {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-normal);
+}
+
+/* כפתור הזהב (Click Your Next $10 ועוד) - בגודל lead.
+   הסלקטור .btn.btn-gold משתמש בשני classes יחד כדי לתת specificity 0,2,0,0,
+   שגובר על ה-attribute selector של font-size:16px (specificity 0,1,0,0)
+   שאחרת היה מבטל את גודל הכפתור. */
+.btn.btn-gold {
+  font-size: var(--fs-lead) !important;
+  max-width: 500px;
+}
+
+/* ============================================================================
+   FAQ
+   ============================================================================ */
+.faq-question {
+  font-size: var(--fs-card);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-card);
+}
+.faq-answer {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+}
+
+/* ============================================================================
+   OVERRIDE INLINE STYLES IN home.html
+   הסטרינגים האלה מופיעים inline בתוך style="..." של אלמנטים ב-HTML.
+   אסור לגעת ב-HTML המקור, אז דורסים אותם בחזרה לסיסטמה דרך attribute
+   selectors + !important.
+   ============================================================================ */
+
+/* Hero H1 inline: clamp(38px, 5.5vw, 64px) → display */
+[style*="font-size:clamp(38px, 5.5vw, 64px)"],
+[style*="font-size: clamp(38px, 5.5vw, 64px)"] {
+  font-size: var(--fs-display) !important;
+}
+
+/* Hero H2 inline: clamp(28px, 4vw, 48px) → section */
+[style*="font-size:clamp(28px, 4vw, 48px)"],
+[style*="font-size: clamp(28px, 4vw, 48px)"] {
+  font-size: var(--fs-section) !important;
+}
+
+/* Skin Memory H2 inline: clamp(26px, 4vw, 44px) → section */
+[style*="font-size:clamp(26px, 4vw, 44px)"],
+[style*="font-size: clamp(26px, 4vw, 44px)"] {
+  font-size: var(--fs-section) !important;
+}
+
+/* "Every click = $10" - 21px → lead */
+[style*="font-size:21px"],
+[style*="font-size: 21px"] {
+  font-size: var(--fs-lead) !important;
+}
+
+/* "Or just get it now" - 18px → lead */
+[style*="font-size:18px"],
+[style*="font-size: 18px"] {
+  font-size: var(--fs-lead) !important;
+}
+
+/* Training paragraphs - 16px → body */
+[style*="font-size:16px"],
+[style*="font-size: 16px"] {
+  font-size: var(--fs-body) !important;
+}
+
+/* Labels (Day 1, Week 1...) + small notes - 14px → small */
+[style*="font-size:14px"],
+[style*="font-size: 14px"] {
+  font-size: var(--fs-small) !important;
+}
+
+/* Small footer notes - 13px → small */
+[style*="font-size:13px"],
+[style*="font-size: 13px"] {
+  font-size: var(--fs-small) !important;
+}
+
+/* Step numbers ① ② ③ ④ ⑤ - 60px → stat */
+[style*="font-size:60px"],
+[style*="font-size: 60px"] {
+  font-size: var(--fs-stat) !important;
+}
+
+/* Override font-weight inline 700 - keep mapped to --fw-bold */
+[style*="font-weight:700"],
+[style*="font-weight: 700"] {
+  font-weight: var(--fw-bold) !important;
+}
+
+/* Override font-weight inline 900 - keep mapped to --fw-black */
+[style*="font-weight:900"],
+[style*="font-weight: 900"] {
+  font-weight: var(--fw-black) !important;
+}
+
+/* ============================================================================
+   CLEAR DEAD TOKENS - מנקים את הטוקנים הישנים שלא בשימוש
+   (לתיעוד בלבד - לא צריך לעשות הרבה, ה-tokens של styles.css
+    פשוט מתעלמים כשהם לא מקושרים לכלום)
+   ============================================================================ */
+
+
+
+/* ========== CLICK-TO-EARN ANIMATION (circle v7) ========== */
+.ce-stage-wrap {
+  width: 100%;
+  max-width: 340px;
+  position: relative;
+  margin: 0 auto;
+}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* Square stage, centered */
+.stage{position:relative;width:100%;max-width:340px;margin:0 auto;background:transparent;overflow:hidden}
+
+/* The wheel rotates; figures counter-rotate to stay upright */
+.wheel{position:absolute;left:0;top:0;width:100%;height:100%;transform-origin:center center}
+
+.fig{position:absolute;z-index:3;transform-origin:center center}
+.fig .inner{position:absolute;inset:0;transform-origin:center center}
+.fig img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain}
+.fig .gray{opacity:1;transition:opacity 0.55s ease-out}
+.fig .color{opacity:0;transition:opacity 0.55s ease-out}
+.fig.active .gray{opacity:0}
+.fig.active .color{opacity:1}
+.fig .squash{transition:transform 0.3s cubic-bezier(0.34, 1.4, 0.55, 1)}
+.fig.bouncing .squash{transform:scale(0.92) translateY(3px)}
+
+.check{position:absolute;opacity:0;transform:scale(0.2) rotate(-30deg);z-index:7;pointer-events:none}
+.check img{width:100%;height:100%;display:block;object-fit:contain}
+.check.show{animation:checkPop 0.5s cubic-bezier(0.34, 1.6, 0.5, 1) forwards}
+.check.show.fading{animation:none;opacity:0;transform:scale(0.6) rotate(0deg);transition:opacity 0.5s ease-out, transform 0.5s ease-out}
+@keyframes checkPop{
+  0%{opacity:0;transform:scale(0.2) rotate(-30deg)}
+  55%{opacity:1;transform:scale(1.18) rotate(8deg)}
+  78%{opacity:1;transform:scale(0.94) rotate(-2deg)}
+  100%{opacity:1;transform:scale(1) rotate(0deg)}
+}
+
+.hand-wrap{position:absolute;z-index:10;pointer-events:none;opacity:0;transform:scale(0.4)}
+.hand{width:100%;height:100%;animation:float 2.4s ease-in-out infinite}
+.hand img{width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 7px 6px rgba(0,0,0,0.2))}
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(-1.5deg)}
+  50%{transform:translateY(-4px) rotate(1.5deg)}
+}
+
+.wow{position:absolute;opacity:0;pointer-events:none;z-index:6}
+.wow img{width:100%;height:100%;display:block;object-fit:contain}
+.wow.burst{animation:wowRise 0.75s cubic-bezier(0.33, 0, 0.4, 1) forwards}
+@keyframes wowRise{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-18px) scale(0.9)}
+}
+
+.lines{position:absolute;width:0;height:0;pointer-events:none;z-index:5}
+.lines .line-wrap{position:absolute;top:0;left:0;width:0;height:0}
+.lines .line{position:absolute;background:#f5b53e;border-radius:2px;transform-origin:0 50%;opacity:0}
+.lines.burst .line{animation:lineBurst 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards}
+@keyframes lineBurst{
+  0%{transform:scaleX(0) translateX(0);opacity:0}
+  22%{opacity:1;transform:scaleX(1) translateX(0)}
+  100%{opacity:0;transform:scaleX(0.55) translateX(14px)}
+}
+
+.money{position:absolute;pointer-events:none;z-index:8}
+.money .label{position:relative;display:inline-block;font-family:'Open Sans',sans-serif;font-weight:800;letter-spacing:-0.5px;color:#1a1a1a;text-shadow:0 1px 0 rgba(255,255,255,0.6);opacity:0;transform-origin:center center;z-index:2;white-space:nowrap}
+@media (prefers-color-scheme: dark){.money .label{color:#f5f5f5;text-shadow:0 1px 0 rgba(0,0,0,0.6)}}
+
+.money .s{position:absolute;display:block;opacity:0;transform-origin:center center}
+.money .s img{width:100%;height:100%;display:block;object-fit:contain}
+
+.money.celebrate .label{
+  animation:labelRise 1.85s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+            labelFade 1.85s linear forwards
+}
+@keyframes labelRise{
+  0%{transform:translateY(42px) scale(0.25)}
+  100%{transform:translateY(-95px) scale(1.65)}
+}
+@keyframes labelFade{
+  0%{opacity:0}
+  5%{opacity:1}
+  78%{opacity:1}
+  100%{opacity:0}
+}
+
+.money.celebrate .s1{
+  animation:star1Burst 1.55s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards,
+            starFade 1.55s linear 0.15s forwards
+}
+.money.celebrate .s2{
+  animation:star2Burst 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.22s forwards,
+            starFade 1.6s linear 0.22s forwards
+}
+.money.celebrate .s3{
+  animation:star3Burst 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.29s forwards,
+            starFade 1.5s linear 0.29s forwards
+}
+@keyframes star1Burst{
+  0%{transform:translate(0, 8px) scale(0) rotate(-15deg)}
+  100%{transform:translate(-52px, -62px) scale(1.4) rotate(55deg)}
+}
+@keyframes star2Burst{
+  0%{transform:translate(0, 6px) scale(0) rotate(20deg)}
+  100%{transform:translate(48px, -68px) scale(1.45) rotate(-60deg)}
+}
+@keyframes star3Burst{
+  0%{transform:translate(0, 8px) scale(0) rotate(-5deg)}
+  100%{transform:translate(-8px, -85px) scale(1.2) rotate(45deg)}
+}
+@keyframes starFade{
+  0%{opacity:0}
+  15%{opacity:1}
+  66%{opacity:1}
+  100%{opacity:0}
+}
+
+
+/* === ITERATION 1: FRAME === */
+/* ============================================================================
+   ITERATION 1.3 - CENTERED 1536 FRAME
+   "הבלוק המרכזי 1536 ממורכז. הרקעים נמשכים עד הקצוות.
+    הוידאו של ה-Hero חי בתוך הבלוק, לא נצמד לקצה."
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. משתני המסגרת - שתי נקודות שליטה בלבד
+   --------------------------------------------------------------------------- */
+:root {
+  --frame-max-width: 1536px;       /* רוחב הבלוק החי */
+  --frame-padding-x: 40px;         /* padding פנימי משני הצדדים */
+
+  /* דריסת צבע טקסט בהיר על רקע כהה: #afafaf → #d3d3d3 (פחות נבלע) */
+  --color-text-light: #d3d3d3;
+  --figma-neutral-light-gray: #d3d3d3;
+  --figma-text-light: #d3d3d3;
+}
+
+/* דריסה ישירה ב-BurstBox panel (השתמש ב-#afafaf hardcoded ולא ב-variable) */
+.bbx-muted,
+.bbx-muted-stack p,
+.bbx-step {
+  color: #d3d3d3 !important;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --frame-padding-x: 20px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   2. כל סטריפ - הבלוק ממורכז, התוכן מיושר שמאל
+       הרקעים (במחלקות section-dark/light/white/gold) כבר full-width במקור.
+   --------------------------------------------------------------------------- */
+.section-dark .section-inner,
+.section-light .section-inner,
+.section-white .section-inner,
+.section-gold .section-inner,
+.section-final-cta .section-inner {
+  max-width: var(--frame-max-width);
+  margin-inline: auto;
+  padding-inline: var(--frame-padding-x);
+  text-align: left;
+}
+
+/* ---------------------------------------------------------------------------
+   3. HERO - נכנס לאותה מסגרת. הוידאו תופס את העמודה הימנית של הבלוק,
+       לא של ה-viewport.
+
+       הרקע: במקור ה-section-hero הוא max-width: none עם רקע שחור.
+       במקום להגביל max-width (שאז הרקע יחתך), אנחנו משאירים אותו full-width
+       וה-padding-inline דוחק את ה-grid הפנימי לאזור 1536 במרכז.
+       זו אותה טכניקה שמשמשת את ה-nav.
+   --------------------------------------------------------------------------- */
+.section-hero {
+  /* ה-max-width: none נשאר מהמקור - הרקע יזרום עד הקצוות */
+  padding-inline: max(
+    var(--frame-padding-x),
+    calc((100% - var(--frame-max-width)) / 2 + var(--frame-padding-x))
+  );
+  /* מקטינים את ה-padding-bottom מ-80 ל-40 כדי לחבר את ה-Hero לרצועת ההוכחה */
+  padding-block-end: 40px;
+}
+
+/* ה-CTA wrapper ב-Hero יש לו inline margin: 32px 0 48px.
+   מקטינים את ה-margin-bottom שלו מ-48 ל-16, להידוק נוסף לפני הרצועה. */
+.section-hero .hero-content > div[style*="margin:32px"],
+.section-hero .hero-content > div[style*="margin: 32px"] {
+  margin-block-end: 16px !important;
+}
+
+/* ה-hero-content במקור יש לו padding-left:40px נוסף - מנטרלים כדי שהקצה
+   השמאלי של ה-Hero יסונכרן עם קצה הסטריפים האחרים */
+.hero-content {
+  padding-left: 0 !important;
+}
+
+/* ה-hero-image במקור היה max-width:90% + margin-left:auto, שדוחק אותו ימינה
+   בתוך העמודה - עכשיו מוגבל ל-568px (הגודל המקורי של hero-product.png 568×396)
+   ויושב בקצה הימני של העמודה. */
+.hero-image {
+  max-width: 568px;
+  margin-left: auto;
+  margin-right: 0;
+  overflow: visible;       /* כדי לאפשר להילה הוורודה של התמונה לחרוג */
+}
+
+/* התמונה החדשה - PNG עם שקיפות והילה רכה, לא צריך border-radius */
+.hero-image img {
+  border-radius: 0 !important;
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   4. NAV - רקע full-width, תוכן ממורכז בתוך מסגרת 1536
+       הפדינג מותאם דינמית: על מסכים רחבים מ-1536, ה-padding ימלא את השוליים.
+       על מסכים צרים יותר, ה-padding יורד למינימום.
+   --------------------------------------------------------------------------- */
+.nav {
+  padding-block: 18px;
+  padding-inline: max(
+    var(--frame-padding-x),
+    calc((100% - var(--frame-max-width)) / 2 + var(--frame-padding-x))
+  );
+}
+
+/* ה-nav-dark: שמרנו על האפקט frosted (rgba + blur).
+   הקו התחתון הומר ל-box-shadow כדי שלא יראה לא-אחיד בצדדים כשיש blur,
+   בעיה שקיימת ב-border-bottom רגיל עם רקע שקוף. */
+.nav.nav-dark {
+  border-bottom: none;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* גם ה-nav הלבן: אותו טיפול לעקביות */
+.nav:not(.nav-dark) {
+  border-bottom: none;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* HERO embraces the nav: ה-section מתחיל ב-y=0 (חודר תחת ה-nav במישור גיאוגרפי),
+   ה-nav יושב מעליו ב-z-index 100. הפתרון פותר את הבעיה שבה ה-backdrop-filter
+   של ה-nav היה רואה את ה-body הלבן בטעינה ראשונית - עכשיו הוא רואה תמיד את
+   הרקע הכהה של ה-hero. ה-padding-top גדל בגובה ה-nav כדי שהתוכן ישאר במקומו.
+   --nav-height מוגדר ב-:root למטה. */
+.section-hero {
+  margin-top: calc(-1 * var(--nav-height));
+  padding-block-start: calc(var(--nav-height) + 80px);
+}
+@media (max-width: 768px) {
+  .section-hero {
+    padding-block-start: calc(var(--nav-height) + 60px);
+  }
+}
+
+:root {
+  --nav-height: 80px;
+}
+
+/* ---------------------------------------------------------------------------
+   5. IMAGE STRIP - באותה מסגרת
+   --------------------------------------------------------------------------- */
+.section-image-strip {
+  padding: 0 0 60px;
+}
+
+.image-strip-inner {
+  max-width: var(--frame-max-width);
+  margin-inline: auto;
+  padding-inline: var(--frame-padding-x);
+}
+
+.strip-images {
+  padding: 0;
+  gap: 8px;
+}
+
+.strip-images img,
+.strip-images video {
+  width: 100%;
+  aspect-ratio: 640 / 270;     /* sinema 21:9 - תואם את גודלם האמיתי של הסרטונים אחרי הסרת ה-letterbox */
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+.strip-gradient {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .strip-images {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 12px;
+    padding: 16px 7.5vw;
+    scroll-padding-inline: 7.5vw;
+  }
+  .strip-images::-webkit-scrollbar {
+    display: none;
+  }
+  .strip-images > video,
+  .strip-images > img {
+    flex: 0 0 85vw;
+    width: 85vw;
+    aspect-ratio: 640 / 270;
+    object-fit: cover;
+    background-color: #1a1a1a;
+    scroll-snap-align: center;
+    transform: scale(0.86);
+    opacity: 0.5;
+    transform-origin: center center;
+    will-change: transform, opacity;
+  }
+  .strip-images > .is-active {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .strip-images > .is-carousel-clone {
+    pointer-events: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   6. עקיפת inline-styles של text-align:center על divים פנימיים
+   --------------------------------------------------------------------------- */
+section .section-inner > div[style*="text-align:center"],
+section .section-inner > div[style*="text-align: center"] {
+  text-align: left !important;
+}
+
+.section-gold .section-inner > div[style*="max-width:640px"],
+.section-gold .section-inner > div[style*="max-width: 640px"] {
+  max-width: 640px !important;
+  margin-inline-start: 0 !important;
+  margin-inline-end: auto !important;
+}
+
+/* FAQ - re-center the header block and the 720px questions container
+   (override of the global left-align that applies to other sections). */
+#faq > div[style*="text-align:center"],
+#faq > div[style*="text-align: center"] {
+  text-align: center !important;
+}
+#faq > div[style*="max-width:720px"],
+#faq > div[style*="max-width: 720px"] {
+  margin-inline: auto !important;
+}
+
+.section-gold .btn-gold,
+.section-final-cta .btn-gold {
+  margin-inline-start: 0 !important;
+  margin-inline-end: auto !important;
+}
+
+.section-gold div[style*="flex-direction:column"][style*="align-items:center"],
+.section-final-cta div[style*="flex-direction:column"][style*="align-items:center"] {
+  align-items: flex-start !important;
+}
+
+/* ---------------------------------------------------------------------------
+   7. ויזואלים פנימיים שממלאים את השטח שלהם בתוך הסטריפ
+   --------------------------------------------------------------------------- */
+.science-image,
+.science-image img {
+  width: 100%;
+}
+
+.ritual-video-wrap,
+.ritual-video-wrap .ritual-video-img {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   8. Skin Memory - יוצא דופן מודע מהיישור-שמאל הגלובלי.
+       הסקציה היא pull-quote קצר ("Skin remembers. Like muscle.") פלוס 3 שלבים.
+       על מסך רחב הטקסט הקצר נראה shrink-ed לקצה שמאל ולא מאוזן.
+       מחזיר למרכז כי זה הקסם של pull-quote.
+   --------------------------------------------------------------------------- */
+.section-skin-memory .section-inner {
+  text-align: center !important;
+}
+.section-skin-memory .section-inner > div[style*="text-align:center"] {
+  text-align: center !important;
+}
+.skin-memory-steps {
+  justify-content: center;
+}
+
+/* האייקונים - מ-48×48 ל-clamp(64, 5vw, 88). יותר נוכחות, פחות חוויית
+   שלוש pin-dots ויותר חוויית שלושה stages חזותיים. */
+.section-skin-memory .skin-memory-icon svg {
+  width: clamp(64px, 5vw, 88px);
+  height: clamp(64px, 5vw, 88px);
+}
+.section-skin-memory .skin-memory-icon {
+  margin-bottom: 24px;  /* היה 16 - נשימה שתואמת לגודל החדש */
+}
+
+/* החלפת SVG ב-GIF אנימטיבי (band-turntable.gif, 310×212).
+   75% מהגודל הקודם: clamp(140,14vw,200) → clamp(105,10.5vw,150). */
+.section-skin-memory .skin-memory-icon img {
+  width: clamp(105px, 10.5vw, 150px);
+  height: auto;
+  display: block;
+  margin-inline: auto;
+}
+
+/* טקסט מתחת לאייקונים - Body במקום Lead (דרסה את ה-typography attribute selector) */
+.section-skin-memory .skin-memory-step p {
+  font-size: var(--fs-body) !important;
+}
+
+/* "Every click = $10" + "Or just get it now" ב-Hero - Body במקום Lead.
+   טרגוט ספציפי ל-section-hero בלבד - הכפתורים (.btn-gold) מוגנים על-ידי ה-rule
+   שלהם, ושאר ה-18px (Skin Memory) ב-section אחר ולא יושפע. */
+.section-hero div[style*="font-size:21px"],
+.section-hero div[style*="font-size: 21px"],
+.section-hero div[style*="font-size:18px"],
+.section-hero div[style*="font-size: 18px"] {
+  font-size: var(--fs-body) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   12. TESTIMONIAL VIDEO PLAYER - וידאו עם poster + play button.
+       - default: poster רואים, וידאו נסתר, play button overlay
+       - לחיצת play: poster + button נעלמים, וידאו פועל
+       - mutual exclusivity: וידאו אחר פעיל = הקודם נעצר וחוזר ל-poster
+       - on ended: חוזר ל-poster
+   --------------------------------------------------------------------------- */
+.testimonial-video-wrap {
+  position: relative;
+  cursor: pointer;
+}
+.testimonial-video-wrap .video-poster {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.testimonial-video-wrap .testimonial-video {
+  width: 100%;
+  height: auto;
+  display: none;
+  background: #000;
+}
+.testimonial-video-wrap.is-playing .video-poster,
+.testimonial-video-wrap.is-playing .video-play-btn {
+  display: none;
+}
+.testimonial-video-wrap.is-playing .testimonial-video {
+  display: block;
+}
+
+/* Play button overlay - ממורכז, רקע כהה שקוף עם משולש לבן (בלי ה-ring הלבן) */
+.video-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;   /* מנטרל styling default של button ב-iOS/Safari */
+  appearance: none;
+  background: rgba(20, 20, 20, 0.7);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  padding-left: 3px;          /* התאמה קלה אחרי הסרת ה-border 2px - שומר על מרכוז המשולש */
+  transition: background 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.video-play-btn:hover {
+  background: rgba(20, 20, 20, 0.9);
+}
+.video-play-btn svg {
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+.video-play-btn:hover svg {
+  transform: scale(1.08);     /* scale רק על ה-SVG - ה-button נשאר ב-position זהה */
+}
+
+/* גוון רקע ספציפי לכל סטריפ כהה (היו זהים כי שניהם section-dark) */
+.section-testimonials { background: #232322; }
+.section-skin-memory { background: #2c2c2a; }
+
+/* תמונה ב-The Technology - לא לעבור את גודל המקורי 568×396 של 24k-gold.png.
+   ממורכזת בעמודה השמאלית של ה-grid. */
+.science-image {
+  max-width: 568px;
+  margin-inline: auto;
+}
+
+/* תמונה ב-Proven Results - דמות 3D על רקע לבן אטום, גודל מקורי 600×509.
+   המקור הגביל ל-400 + border-radius; ברקע לבן אטום ה-border-radius עדיין מיותר. */
+.clinical-image img {
+  max-width: 600px !important;
+  border-radius: 0 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   13. IMAGE PLACEHOLDERS - placeholders זמניים ב-Technology / Proven Results.
+       שומרים על proportion התמונה המקורית כדי שה-layout של ה-section לא ישתנה.
+       Technology: 568×396 (aspect 568/396 ≈ 7:5)
+       Proven Results: 600×509 (aspect 600/509 ≈ 1.18 - קרוב לריבועי)
+   --------------------------------------------------------------------------- */
+.image-placeholder {
+  width: 100%;
+  background: linear-gradient(135deg, #ececec, #f8f8f8);
+  border: 2px dashed #c8c8c8;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.image-placeholder::before {
+  content: attr(data-label);
+}
+
+.science-image .image-placeholder {
+  aspect-ratio: 568 / 396;
+  max-width: 568px;
+  margin-inline: auto;
+}
+.clinical-image .image-placeholder {
+  aspect-ratio: 600 / 509;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   14. DAILY RITUAL STEPS - 5 cards של negative-space cutout numbers.
+       - Layout: 5 ב-row (desktop רחב) → 3+2 (desktop צר/tablet) → 1col (mobile)
+       - Card: number gold squircle משמאל, h3+p מימין
+       - The "cutout" effect: text color זהה ל-section background
+   --------------------------------------------------------------------------- */
+.ritual-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 32px;
+  margin-bottom: 60px;
+}
+
+@media (max-width: 768px) {
+  .ritual-steps {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.ritual-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  text-align: left;
+}
+
+/* SVG ינלי עם החור של הספרה כ-path אמיתי (evenodd fill-rule).
+   ה-fill מובנה ב-SVG (#dbbd85). אם נצטרך לשנות בעתיד - אפשר ב-CSS עם currentColor. */
+.ritual-num {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.ritual-content h3 {
+  margin: 0 0 8px;
+}
+.ritual-content p {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   15. BTN-GOLD על רקע זהוב - הפיכה לכהה (אחרת זהב על זהב = בלתי נראה).
+       background ו-hover שניהם #0a0a0a עם טקסט לבן.
+       ה-rotating glow (::before), scale hover, max-width, font-size - נשארים.
+   --------------------------------------------------------------------------- */
+.section-gold .btn-gold,
+.section-gold .btn-gold:hover {
+  background: #0a0a0a;
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   16. FOOTER - מסתירים זמנית את ה-footer-links (החלטה סופית בהמשך).
+       footer-top נשאר אבל בלי padding כדי שלא יישאר חלל ריק.
+       footer-bottom רקע #232322.
+   --------------------------------------------------------------------------- */
+.footer-links {
+  display: none;
+}
+
+.footer-figma .footer-top {
+  padding: 0;
+}
+
+.footer-figma .footer-bottom {
+  background: #232322;
+}
+
+/* ---------------------------------------------------------------------------
+   9. CURSOR FIX - ה-`<span class="editable">` בתוך כפתורים יורש את ה-cursor
+       של ההורה (pointer), במקום ה-cursor:text של .editable שמרגיש כאילו
+       הטקסט אינו לחיץ. הקליק עצמו תמיד עבד (event bubbling), זו בעיית UX
+       ויזואלית בלבד.
+   --------------------------------------------------------------------------- */
+.btn .editable,
+.btn .editable *,
+a.btn-gold .editable,
+a.nav-cta .editable {
+  cursor: inherit !important;
+}
+
+/* ---------------------------------------------------------------------------
+   10. TESTIMONIALS - שינויים קלים בלבד:
+       - שורת הכוכבים מתחת לשם (flex-direction: column ב-header)
+       - שם + גיל בגודל Lead
+       (ה-grid layout, padding, ו-order נשארו לפי הקיים במקור.)
+   --------------------------------------------------------------------------- */
+
+/* Header - שם בשורה אחת, כוכבים מתחת */
+.testimonial-card-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* שם + גיל בגודל Lead - specificity מוגבר */
+section.section-dark .testimonial-card-header > div:first-child {
+  font-size: var(--fs-lead) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   9. 3D Explorer - placeholder ממורכז (הוחזר למרכז ב-iter8-9+)
+   styles.css נותן margin:0 auto + align-items:center; ה-inline על
+   .section-inner נותן text-align:center. אין צורך בדריסה כאן.
+   --------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   10. Final CTA
+   --------------------------------------------------------------------------- */
+.section-final-cta .section-inner > div[style*="text-align:center"] {
+  text-align: left !important;
+}
+.section-final-cta .lead {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* ---------------------------------------------------------------------------
+   11. כותרות יורשות יישור מההורה
+   --------------------------------------------------------------------------- */
+section .section-inner .h2,
+section .section-inner .h3,
+section .section-inner .lead,
+section .section-inner p {
+  text-align: inherit;
+}
+
+
+/* ---------------------------------------------------------------------------
+   12. Click to Earn - layout דו-עמודי (טקסט שמאל / תמונה ימין)
+   במובייל: stack לפי סדר HTML (טקסט מעל תמונה), בעקבות פטרן science-layout
+   --------------------------------------------------------------------------- */
+.click-to-earn-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.click-to-earn-text {
+  text-align: left;
+}
+.click-to-earn-text .lead,
+.click-to-earn-text p {
+  margin-left: 0;
+  margin-right: auto;
+}
+.click-to-earn-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.click-to-earn-cta .btn-gold {
+  justify-content: center !important;
+}
+.click-to-earn-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.click-to-earn-image img {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  display: block;
+}
+@media (max-width: 768px) {
+  .click-to-earn-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .click-to-earn-text {
+    text-align: center;
+  }
+  .click-to-earn-text .lead,
+  .click-to-earn-text p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .click-to-earn-cta {
+    align-items: center;
+  }
+  .click-to-earn-image img {
+    max-width: 220px;
+  }
+}
+
+
+
+/* ----------------------------------------------------------------------------
+   FINAL CTA - 2-column layout (image LEFT / text RIGHT)
+   Mobile: stacks (image on top, text below) — same pattern as click-to-earn
+   --------------------------------------------------------------------------- */
+.final-cta-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: left;
+}
+.final-cta-text {
+  text-align: left;
+}
+.final-cta-text .lead {
+  margin-left: 0;
+  margin-right: auto;
+}
+.final-cta-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 32px;
+}
+.final-cta-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.final-cta-image img,
+.final-cta-image video {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+@media (max-width: 768px) {
+  .final-cta-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    text-align: center;
+  }
+  .final-cta-text {
+    text-align: center;
+  }
+  .final-cta-text .lead {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .final-cta-buttons {
+    align-items: center;
+  }
+  .final-cta-image img,
+  .final-cta-image video {
+    max-width: 320px;
+  }
+}
+
+/* Section background colors */
+#product-explorer { background-color: #1b1b1b; }
+#ritual { background-color: #232322; }
+#training-progress { background-color: #2c2c2a; }
+
+
+/* === ITERATION 2: TYPOGRAPHY === */
+/* ============================================================================
+   ITERATION 2 - TYPOGRAPHY SYSTEM
+   "שכבה אחת אמיתית: tokens → classes → דריסה של inline overrides."
+
+   החלטות:
+   1. הפונט: Hero_New לא נטען בשום מקום בקוד המקור. עד שיהיה קובץ פונט
+      רשמי, אנחנו טוענים את Inter מ-Google Fonts. אם יש קובץ של Hero_New,
+      צריך @font-face במקום ה-@import.
+   2. Scale: 8 רמות סמנטיות (display / section / card / stat / lead / body /
+      small / micro), נע פלואידית עם clamp(min, vw, max).
+   3. משקלים: 4 בלבד (regular / medium / bold / black). המשקלים 100/300
+      הוסרו מהסיסטמה - הם לא היו בשימוש בפועל.
+   4. Line-heights ו-letter-spacing: tokens סמנטיים, לא ערכי pixel קבועים.
+   ============================================================================ */
+
+
+:root {
+  /* ===== FONT FAMILY ===== */
+  --font-primary: "Inter", "Hero_New", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* ===== TYPE SCALE (semantic, fluid) =====
+     שמות לפי שימוש, לא לפי גודל מספרי                              min      preferred  max */
+  --fs-display:  clamp(40px, 6vw,    72px);  /* Hero H1 - הרגע הכי גדול */
+  --fs-section:  clamp(32px, 4.5vw,  56px);  /* כותרות סטריפים (.h1 / .h2) */
+  --fs-card:     clamp(20px, 2vw,    24px);  /* כותרות כרטיסים (.h3) */
+  --fs-stat:     clamp(40px, 5vw,    64px);  /* "31%", "$10", "5 min" */
+  --fs-lead:     clamp(18px, 1.6vw,  22px);  /* פסקה מובילה */
+  --fs-body:     16px;                        /* גוף טקסט */
+  --fs-small:    14px;                        /* טקסט משני, labels */
+  --fs-micro:    12px;                        /* eyebrows, footnotes */
+
+  /* ===== WEIGHTS (4 active) ===== */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-bold:     700;
+  --fw-black:    900;
+
+  /* ===== LINE HEIGHTS ===== */
+  --lh-display:  0.95;
+  --lh-heading:  1.05;
+  --lh-card:     1.2;
+  --lh-body:     1.6;
+  --lh-tight:    1.3;
+
+  /* ===== LETTER SPACING ===== */
+  --ls-display:  -0.03em;
+  --ls-heading:  -0.02em;
+  --ls-normal:    0;
+  --ls-eyebrow:   0.15em;
+}
+
+/* ============================================================================
+   BASE
+   ============================================================================ */
+body {
+  font-family: var(--font-primary);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+}
+
+/* ============================================================================
+   CLASSES - משתמשים בטוקנים, לא ב-pixel קבוע
+   ============================================================================ */
+
+/* H1 רגיל = section size; ב-Hero ספציפית הוא display (override למטה) */
+.h1 {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+  margin-bottom: 24px;
+}
+
+/* H1 של ה-Hero - הרגע הגדול */
+.section-hero .h1 {
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+}
+
+/* H2 = כותרת ראשית של סטריפ */
+.h2 {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+  margin-bottom: 24px;
+}
+
+/* H3 = כותרת כרטיס / step / sub-section */
+.h3 {
+  font-size: var(--fs-card);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-card);
+  letter-spacing: var(--ls-normal);
+  margin-bottom: 16px;
+}
+
+/* Lead - פסקה מובילה */
+.lead {
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-regular);
+  line-height: 1.4;
+  color: var(--gray);
+  margin-bottom: 32px;
+  max-width: 640px;
+  letter-spacing: var(--ls-normal);
+}
+
+/* ב-Hero ה-lead מתפקד כסאב-טייטל (לא כפסקה ארוכה) - צריך לקבל את אותו
+   רוחב טבעי כמו ה-H2 שמעליו, ולא להישבר מוקדם. */
+.section-hero .lead {
+  max-width: none;
+}
+
+/* Stat displays - "31% More Collagen", "$10", "5 min" */
+.stat-num {
+  font-size: var(--fs-stat);
+  font-weight: var(--fw-black);
+  line-height: 1;
+  letter-spacing: var(--ls-heading);
+}
+.stat-label {
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+/* Section labels (eyebrows) - gold badge עם black text */
+.section-label,
+.eyebrow {
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+/* בתוך section-gold הרקע זהוב - מהפכים את ה-badge לשחור עם טקסט זהוב */
+.section-gold .section-label {
+  background: var(--color-black);
+  color: var(--gold);
+}
+
+/* ============================================================================
+   NAV - טיפוגרפיה ייעודית
+   ============================================================================ */
+.nav-logo {
+  font-weight: var(--fw-black);
+  letter-spacing: var(--ls-heading);
+}
+.nav-links a {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+}
+.nav-cta {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-bold);
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+.btn {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-normal);
+}
+
+/* כפתור הזהב (Click Your Next $10 ועוד) - בגודל lead.
+   הסלקטור .btn.btn-gold משתמש בשני classes יחד כדי לתת specificity 0,2,0,0,
+   שגובר על ה-attribute selector של font-size:16px (specificity 0,1,0,0)
+   שאחרת היה מבטל את גודל הכפתור. */
+.btn.btn-gold {
+  font-size: var(--fs-lead) !important;
+  max-width: 500px;
+}
+
+/* ============================================================================
+   FAQ
+   ============================================================================ */
+.faq-question {
+  font-size: var(--fs-card);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-card);
+}
+.faq-answer {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+}
+
+/* ============================================================================
+   OVERRIDE INLINE STYLES IN home.html
+   הסטרינגים האלה מופיעים inline בתוך style="..." של אלמנטים ב-HTML.
+   אסור לגעת ב-HTML המקור, אז דורסים אותם בחזרה לסיסטמה דרך attribute
+   selectors + !important.
+   ============================================================================ */
+
+/* Hero H1 inline: clamp(38px, 5.5vw, 64px) → display */
+[style*="font-size:clamp(38px, 5.5vw, 64px)"],
+[style*="font-size: clamp(38px, 5.5vw, 64px)"] {
+  font-size: var(--fs-display) !important;
+}
+
+/* Hero H2 inline: clamp(28px, 4vw, 48px) → section */
+[style*="font-size:clamp(28px, 4vw, 48px)"],
+[style*="font-size: clamp(28px, 4vw, 48px)"] {
+  font-size: var(--fs-section) !important;
+}
+
+/* Skin Memory H2 inline: clamp(26px, 4vw, 44px) → section */
+[style*="font-size:clamp(26px, 4vw, 44px)"],
+[style*="font-size: clamp(26px, 4vw, 44px)"] {
+  font-size: var(--fs-section) !important;
+}
+
+/* "Every click = $10" - 21px → lead */
+[style*="font-size:21px"],
+[style*="font-size: 21px"] {
+  font-size: var(--fs-lead) !important;
+}
+
+/* "Or just get it now" - 18px → lead */
+[style*="font-size:18px"],
+[style*="font-size: 18px"] {
+  font-size: var(--fs-lead) !important;
+}
+
+/* Training paragraphs - 16px → body */
+[style*="font-size:16px"],
+[style*="font-size: 16px"] {
+  font-size: var(--fs-body) !important;
+}
+
+/* Labels (Day 1, Week 1...) + small notes - 14px → small */
+[style*="font-size:14px"],
+[style*="font-size: 14px"] {
+  font-size: var(--fs-small) !important;
+}
+
+/* Small footer notes - 13px → small */
+[style*="font-size:13px"],
+[style*="font-size: 13px"] {
+  font-size: var(--fs-small) !important;
+}
+
+/* Step numbers ① ② ③ ④ ⑤ - 60px → stat */
+[style*="font-size:60px"],
+[style*="font-size: 60px"] {
+  font-size: var(--fs-stat) !important;
+}
+
+/* Override font-weight inline 700 - keep mapped to --fw-bold */
+[style*="font-weight:700"],
+[style*="font-weight: 700"] {
+  font-weight: var(--fw-bold) !important;
+}
+
+/* Override font-weight inline 900 - keep mapped to --fw-black */
+[style*="font-weight:900"],
+[style*="font-weight: 900"] {
+  font-weight: var(--fw-black) !important;
+}
+
+/* ============================================================================
+   CLEAR DEAD TOKENS - מנקים את הטוקנים הישנים שלא בשימוש
+   (לתיעוד בלבד - לא צריך לעשות הרבה, ה-tokens של styles.css
+    פשוט מתעלמים כשהם לא מקושרים לכלום)
+   ============================================================================ */
+
+
+
+/* ========== CLICK-TO-EARN ANIMATION (circle v7) ========== */
+.ce-stage-wrap {
+  width: 100%;
+  max-width: 340px;
+  position: relative;
+  margin: 0 auto;
+}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* Square stage, centered */
+.stage{position:relative;width:100%;max-width:340px;margin:0 auto;background:transparent;overflow:hidden}
+
+/* The wheel rotates; figures counter-rotate to stay upright */
+.wheel{position:absolute;left:0;top:0;width:100%;height:100%;transform-origin:center center}
+
+.fig{position:absolute;z-index:3;transform-origin:center center}
+.fig .inner{position:absolute;inset:0;transform-origin:center center}
+.fig img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain}
+.fig .gray{opacity:1;transition:opacity 0.55s ease-out}
+.fig .color{opacity:0;transition:opacity 0.55s ease-out}
+.fig.active .gray{opacity:0}
+.fig.active .color{opacity:1}
+.fig .squash{transition:transform 0.3s cubic-bezier(0.34, 1.4, 0.55, 1)}
+.fig.bouncing .squash{transform:scale(0.92) translateY(3px)}
+
+.check{position:absolute;opacity:0;transform:scale(0.2) rotate(-30deg);z-index:7;pointer-events:none}
+.check img{width:100%;height:100%;display:block;object-fit:contain}
+.check.show{animation:checkPop 0.5s cubic-bezier(0.34, 1.6, 0.5, 1) forwards}
+.check.show.fading{animation:none;opacity:0;transform:scale(0.6) rotate(0deg);transition:opacity 0.5s ease-out, transform 0.5s ease-out}
+@keyframes checkPop{
+  0%{opacity:0;transform:scale(0.2) rotate(-30deg)}
+  55%{opacity:1;transform:scale(1.18) rotate(8deg)}
+  78%{opacity:1;transform:scale(0.94) rotate(-2deg)}
+  100%{opacity:1;transform:scale(1) rotate(0deg)}
+}
+
+.hand-wrap{position:absolute;z-index:10;pointer-events:none;opacity:0;transform:scale(0.4)}
+.hand{width:100%;height:100%;animation:float 2.4s ease-in-out infinite}
+.hand img{width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 7px 6px rgba(0,0,0,0.2))}
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(-1.5deg)}
+  50%{transform:translateY(-4px) rotate(1.5deg)}
+}
+
+.wow{position:absolute;opacity:0;pointer-events:none;z-index:6}
+.wow img{width:100%;height:100%;display:block;object-fit:contain}
+.wow.burst{animation:wowRise 0.75s cubic-bezier(0.33, 0, 0.4, 1) forwards}
+@keyframes wowRise{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-18px) scale(0.9)}
+}
+
+.lines{position:absolute;width:0;height:0;pointer-events:none;z-index:5}
+.lines .line-wrap{position:absolute;top:0;left:0;width:0;height:0}
+.lines .line{position:absolute;background:#f5b53e;border-radius:2px;transform-origin:0 50%;opacity:0}
+.lines.burst .line{animation:lineBurst 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards}
+@keyframes lineBurst{
+  0%{transform:scaleX(0) translateX(0);opacity:0}
+  22%{opacity:1;transform:scaleX(1) translateX(0)}
+  100%{opacity:0;transform:scaleX(0.55) translateX(14px)}
+}
+
+.money{position:absolute;pointer-events:none;z-index:8}
+.money .label{position:relative;display:inline-block;font-family:'Open Sans',sans-serif;font-weight:800;letter-spacing:-0.5px;color:#1a1a1a;text-shadow:0 1px 0 rgba(255,255,255,0.6);opacity:0;transform-origin:center center;z-index:2;white-space:nowrap}
+@media (prefers-color-scheme: dark){.money .label{color:#f5f5f5;text-shadow:0 1px 0 rgba(0,0,0,0.6)}}
+
+.money .s{position:absolute;display:block;opacity:0;transform-origin:center center}
+.money .s img{width:100%;height:100%;display:block;object-fit:contain}
+
+.money.celebrate .label{
+  animation:labelRise 1.85s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+            labelFade 1.85s linear forwards
+}
+@keyframes labelRise{
+  0%{transform:translateY(42px) scale(0.25)}
+  100%{transform:translateY(-95px) scale(1.65)}
+}
+@keyframes labelFade{
+  0%{opacity:0}
+  5%{opacity:1}
+  78%{opacity:1}
+  100%{opacity:0}
+}
+
+.money.celebrate .s1{
+  animation:star1Burst 1.55s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards,
+            starFade 1.55s linear 0.15s forwards
+}
+.money.celebrate .s2{
+  animation:star2Burst 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.22s forwards,
+            starFade 1.6s linear 0.22s forwards
+}
+.money.celebrate .s3{
+  animation:star3Burst 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.29s forwards,
+            starFade 1.5s linear 0.29s forwards
+}
+@keyframes star1Burst{
+  0%{transform:translate(0, 8px) scale(0) rotate(-15deg)}
+  100%{transform:translate(-52px, -62px) scale(1.4) rotate(55deg)}
+}
+@keyframes star2Burst{
+  0%{transform:translate(0, 6px) scale(0) rotate(20deg)}
+  100%{transform:translate(48px, -68px) scale(1.45) rotate(-60deg)}
+}
+@keyframes star3Burst{
+  0%{transform:translate(0, 8px) scale(0) rotate(-5deg)}
+  100%{transform:translate(-8px, -85px) scale(1.2) rotate(45deg)}
+}
+@keyframes starFade{
+  0%{opacity:0}
+  15%{opacity:1}
+  66%{opacity:1}
+  100%{opacity:0}
+}
+
+
+
+/* ── ITERATION 2 missing class overrides ── */
+.h1 {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+  margin-bottom: 24px;
+}
+.section-hero .h1 {
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+}
+.h2 {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+  margin-bottom: 24px;
+}
+.h3 {
+  font-size: var(--fs-card);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-card);
+  letter-spacing: var(--ls-normal);
+  margin-bottom: 16px;
+}
